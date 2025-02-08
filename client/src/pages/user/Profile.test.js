@@ -103,6 +103,39 @@ jest.mock("../../context/auth", () => ({
           });
     });
 
+    // Test 3 for "Frontend Profile Page Unit Test"
+    test("API failure show error message from toast", async () => {
+      axios.put.mockRejectedValueOnce(new Error("Mock API error"));
 
+      render(
+        <MemoryRouter>
+            <AuthContext.Provider value={[mockAuth, mockSetAuth]}>
+            <Profile />
+            </AuthContext.Provider>
+        </MemoryRouter>
+      );
+
+      fireEvent.click(screen.getByText("UPDATE"));
+      await waitFor(() => {
+        expect(console.log).toHaveBeenCalled("Mock API error");
+        expect(toast.error).toHaveBeenCalledWith("Something went wrong");
+      });
+    })
+
+    // Test 4 for "Frontend Profile Page Unit Test"
+    test("API success has data with error stored", async () => {
+      axios.put.mockResolvedValueOnce({ data : { error : "Mock error in data, to be printed by toast"}});
+      render(
+        <MemoryRouter>
+            <AuthContext.Provider value={[mockAuth, mockSetAuth]}>
+            <Profile />
+            </AuthContext.Provider>
+        </MemoryRouter>
+      );
+      fireEvent.click(screen.getByText("UPDATE"));
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Mock error in data, to be printed by toast");
+      });
+    })
 }
   )
