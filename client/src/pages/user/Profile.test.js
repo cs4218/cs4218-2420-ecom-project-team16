@@ -105,6 +105,7 @@ jest.mock("../../context/auth", () => ({
 
     // Test 3 for "Frontend Profile Page Unit Test"
     test("API failure show error message from toast", async () => {
+      jest.spyOn(console, "log").mockImplementation(() => {}); 
       axios.put.mockRejectedValueOnce(new Error("Mock API error"));
 
       render(
@@ -117,7 +118,8 @@ jest.mock("../../context/auth", () => ({
 
       fireEvent.click(screen.getByText("UPDATE"));
       await waitFor(() => {
-        expect(console.log).toHaveBeenCalled("Mock API error");
+        expect(console.log).toHaveBeenCalledWith(expect.any(Error));
+        expect(console.log).toHaveBeenCalledWith(expect.objectContaining({ message : "Mock API error"}));
         expect(toast.error).toHaveBeenCalledWith("Something went wrong");
       });
     })
