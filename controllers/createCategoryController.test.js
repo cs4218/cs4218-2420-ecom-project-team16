@@ -2,8 +2,6 @@ import { jest } from "@jest/globals";
 import { createCategoryController } from "./categoryController";
 import categoryModel from "../models/categoryModel.js";
 import slugify from "slugify";
-import userModel from "../models/userModel";
-import { error } from "console";
 
 jest.mock("../models/categoryModel.js");
 jest.mock("slugify", () => jest.fn(() => "mock-slug"));
