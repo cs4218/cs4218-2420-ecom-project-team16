@@ -3,6 +3,4 @@ node_modules
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-jest.backend.config.js
-jest.frontend.config.js
 coverage
