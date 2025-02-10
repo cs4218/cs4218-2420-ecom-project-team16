@@ -1,8 +1,15 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
-
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
+
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 export const registerController = async (req, res) => {
   try {
@@ -25,6 +32,11 @@ export const registerController = async (req, res) => {
     }
     if (!answer) {
       return res.send({ message: "Answer is Required" });
+    }
+    //check valid email
+    const validEmail = validateEmail(email);
+    if (!validEmail) {
+      return res.send({ message: "Invalid email address" });
     }
     //check user
     const exisitingUser = await userModel.findOne({ email });
