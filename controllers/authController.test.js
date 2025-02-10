@@ -1,12 +1,14 @@
 import { jest } from "@jest/globals";
-import { forgotPasswordController, loginController, registerController, testController, updateProfileController } from "./authController";
+import { forgotPasswordController, getAllOrdersController, getOrdersController, loginController, orderStatusController, registerController, testController, updateProfileController } from "./authController";
 import userModel from "../models/userModel";
 import { comparePassword, hashPassword } from "../helpers/authHelper";
 import JWT from "jsonwebtoken";
+import orderModel from "../models/orderModel.js";
 
 jest.mock("../models/userModel.js");
 jest.mock("../helpers/authHelper.js");
 jest.mock("jsonwebtoken");
+jest.mock("../models/orderModel.js");
 
 describe("Register Controller Test", () => {
   let req, res;
@@ -325,3 +327,143 @@ describe("Update Profile Controller Tests", () => {
    * TODO: ADD MORE FOR DIFFERENT COMBINATIONS OF INPUT
    */
 });
+
+describe("Get Orders Controller Tests", () => {
+  let req, res;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    req = {
+      user: {
+        _id: 1
+      }
+    };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    };
+  });
+
+  test("Successful get of buyer orders", async () => {
+    orderModel.find = jest.fn().mockReturnThis();
+    orderModel.populate = jest.fn().mockReturnThis();
+
+    await getOrdersController(req, res);
+    expect(res.json).toHaveBeenCalled();
+  });
+
+  // LOOK INTO THESE TEST CASES AGAIN
+  test("Error during database retrieval", async () => {  
+    orderModel.find = jest.fn().mockImplementation(() => {
+      throw new Error("Database Error");
+    });
+    orderModel.populate = jest.fn().mockReturnThis();
+
+    await getOrdersController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  test("Error during population of extra data", async () => {
+    orderModel.find = jest.fn().mockReturnThis();
+    orderModel.populate = jest.fn().mockImplementation(() => {
+      throw new Error("Database Error");
+    });
+
+    await getOrdersController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  /**
+   * CHECK IF WE NEED TO CHECK IF THE DATA IS POPULATED CORRECTLY!
+   */
+});
+
+describe("Get All Orders Controller Test", () => {
+  let req, res;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    res = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    };
+  });
+
+  test("Successfully get all orders", async () => {
+    orderModel.find = jest.fn().mockReturnThis();
+    orderModel.populate = jest.fn().mockReturnThis();
+    orderModel.sort = jest.fn().mockReturnThis();
+
+    await getAllOrdersController(req, res);
+    expect(res.json).toHaveBeenCalled();
+  });
+
+  test("Error during database retrieval", async () => {  
+    orderModel.find = jest.fn().mockImplementation(() => {
+      throw new Error("Database Error");
+    });
+    orderModel.populate = jest.fn().mockReturnThis();
+    orderModel.sort = jest.fn().mockReturnThis();
+
+
+    await getAllOrdersController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  test("Error during population of extra data", async () => {
+    orderModel.find = jest.fn().mockReturnThis();
+    orderModel.populate = jest.fn().mockImplementation(() => {
+      throw new Error("Database Error");
+    });
+    orderModel.sort = jest.fn().mockReturnThis();
+
+
+    await getAllOrdersController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+  
+  test("Error during population of extra data", async () => {
+    orderModel.find = jest.fn().mockReturnThis();
+    orderModel.populate = jest.fn().mockReturnThis();
+    orderModel.sort = jest.fn().mockImplementation(() => {
+      throw new Error("Database Error");
+    });
+
+    await getAllOrdersController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+});
+
+describe("Order Status Controller Test", () => {
+  let req, res;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    req = {
+      params: {
+        orderId: 1
+      },
+      body: {
+        status: "true"
+      }
+    };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    };
+  });
+
+  test("Successfully Updated Order", async () => {
+    orderModel.findByIdAndUpdate = jest.fn().mockReturnThis();
+
+    await orderStatusController(req, res);
+    expect(res.json).toHaveBeenCalled();
+  });
+
+  test("Error during database Retrieval", async () => {
+    orderModel.findByIdAndUpdate = jest.fn().mockRejectedValue(new Error("Database Error"));
+
+    await orderStatusController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+  })
+})
