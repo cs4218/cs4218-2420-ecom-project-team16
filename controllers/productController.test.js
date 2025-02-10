@@ -60,7 +60,6 @@ beforeEach(() => {
 })
 
 describe("Create Product Controller Test", () => {
-  let mockReq, mockRes;
   let mockProduct;
 
   beforeEach(() => {
