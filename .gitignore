@@ -3,5 +3,6 @@ node_modules
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-/sonar-project.properties/
+sonar-project.properties
 /coverage/
+.scannerwork/
