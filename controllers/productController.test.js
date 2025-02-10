@@ -19,6 +19,7 @@ jest.mock('braintree', () => ({
 }));
 
 let mockCategory;
+let mockProduct;
 let mockReq;
 let mockRes;
 
@@ -26,6 +27,11 @@ beforeEach(() => {
   jest.clearAllMocks()
 
   mockCategory = {_id: "someCategoryId", name: "Category", slug: "test-category"}
+  mockProduct = {
+    photo: { data: null, contentType: null },
+    slug: 'updated-product',
+    save: jest.fn().mockResolvedValue(true),
+  };
   mockReq = {
     params: { pid: "someProductId" },
     fields: {
@@ -60,49 +66,7 @@ beforeEach(() => {
 })
 
 describe("Create Product Controller Test", () => {
-  let mockProduct;
-
   beforeEach(() => {
-    jest.clearAllMocks()
-
-    const mockCategory = {
-      _id: "someCategoryId",
-      name: "Category",
-      slug: "test-category",
-    }
-
-    mockReq = {
-      params: { pid: "someProductId"},
-      fields: {
-        name: "Updated Product",
-        description: "Updated Description",
-        price: 100,
-        category: mockCategory._id,
-        quantity: 10,
-      },
-      files: {
-        photo: {
-          size: 500000,
-          path: '/temp/test-image.jpg',
-          type: 'image/jpeg'
-        }
-      }
-    };
-
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    };
-
-    mockProduct = {
-      photo: {
-        data: null,
-        contentType: null,
-      },
-      slug: 'updated-product',
-      save: jest.fn().mockResolvedValue(true),
-    };
-
     productModel.mockImplementation(() => mockProduct)
   })
 
@@ -237,19 +201,7 @@ describe("Create Product Controller Test", () => {
 
 
 describe("Update Product Controller Test", () => {
-  let mockProduct;
-
   beforeEach(() => {
-    // Create a mock product with a save method
-    mockProduct = {
-      photo: {
-        data: null,
-        contentType: null,
-      },
-      slug: 'updated-product',
-      save: jest.fn().mockResolvedValue(true),
-    };
-
     productModel.findByIdAndUpdate.mockResolvedValue(mockProduct);
   });
 
