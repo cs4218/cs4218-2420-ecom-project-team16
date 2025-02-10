@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { createProductController, updateProductController } from "./productController";
+import { createProductController, getProductController, updateProductController } from "./productController";
 import productModel from "../models/productModel";
 import fs from "fs"
 import braintree from "braintree";
+import mongoose from "mongoose";
 
 jest.mock("../models/productModel.js")
 jest.mock("../models/categoryModel.js")
@@ -199,6 +200,141 @@ describe("Create Product Controller Test", () => {
   });
 })
 
+describe("Get Product Controller Test", () => {
+  let mockQueryChain;
+  let mockProducts;
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+
+    mockProducts = [
+      {
+        name: "Product 1",
+        slug: "product-1",
+        description: "Description for product 1",
+        price: 100,
+        category: {
+          _id: new mongoose.Types.ObjectId(),
+          name: "Category 1"
+        },
+        quantity: 10,
+        photo: {
+          data: Buffer.from("mock-image-1"),
+          contentType: "image/jpeg"
+        },
+        shipping: true,
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01")
+      },
+      {
+        name: "Product 2",
+        slug: "product-2",
+        description: "Description for product 2",
+        price: 200,
+        category: {
+          _id: new mongoose.Types.ObjectId(),
+          name: "Category 2"
+        },
+        quantity: 5,
+        photo: {
+          data: Buffer.from("mock-image-2"),
+          contentType: "image/jpeg"
+        },
+        shipping: false,
+        createdAt: new Date("2024-01-02"),
+        updatedAt: new Date("2024-01-02")
+      }
+    ];
+
+    // Set up the mock query chain that actually returns the mock products
+    const mockFind = jest.fn().mockReturnThis();
+    const mockPopulate = jest.fn().mockReturnThis();
+    const mockSelect = jest.fn().mockReturnThis();
+    const mockLimit = jest.fn().mockReturnThis();
+    const mockSort = jest.fn().mockResolvedValue(mockProducts);
+
+    // Attach all methods to the find method
+    mockFind.populate = mockPopulate;
+    mockFind.select = mockSelect;
+    mockFind.limit = mockLimit;
+    mockFind.sort = mockSort;
+
+    productModel.find = jest.fn().mockReturnValue(mockFind);
+
+  })
+  
+  test("should get all products successfully", async () => {
+    await getProductController(mockReq, mockRes);
+
+    // Verify query chain methods were called
+    expect(productModel.find).toHaveBeenCalledWith({});
+    
+    const findResult = productModel.find();
+    expect(findResult.populate).toHaveBeenCalledWith("category");
+    expect(findResult.select).toHaveBeenCalledWith("-photo");
+    expect(findResult.limit).toHaveBeenCalledWith(12);
+    expect(findResult.sort).toHaveBeenCalledWith({ createdAt: -1 });
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      counTotal: mockProducts.length,
+      message: "ALlProducts ",
+      products: mockProducts
+    });
+  })
+
+  test("should handle empty product list", async () => {
+    // Mock empty results
+    const emptyFind = jest.fn().mockReturnThis();
+    emptyFind.populate = jest.fn().mockReturnThis();
+    emptyFind.select = jest.fn().mockReturnThis();
+    emptyFind.limit = jest.fn().mockReturnThis();
+    emptyFind.sort = jest.fn().mockResolvedValue([]);
+    
+    productModel.find = jest.fn().mockReturnValue(emptyFind);
+
+    await getProductController(mockReq, mockRes);
+
+    // Verify query chain methods were called
+    expect(productModel.find).toHaveBeenCalledWith({});
+    
+    const findResult = productModel.find();
+    expect(findResult.populate).toHaveBeenCalledWith("category");
+    expect(findResult.select).toHaveBeenCalledWith("-photo");
+    expect(findResult.limit).toHaveBeenCalledWith(12);
+    expect(findResult.sort).toHaveBeenCalledWith({ createdAt: -1 });
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      counTotal: 0,
+      message: "ALlProducts ",
+      products: []
+    });
+  })
+
+  test("should handle database error", async () => {
+    const errorFind = jest.fn().mockReturnThis();
+    errorFind.populate = jest.fn().mockReturnThis();
+    errorFind.select = jest.fn().mockReturnThis();
+    errorFind.limit = jest.fn().mockReturnThis();
+    errorFind.sort = jest.fn().mockRejectedValue(new Error("Database error"));
+    
+    productModel.find = jest.fn().mockReturnValue(errorFind);
+
+    await getProductController(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Erorr in getting products",
+      error: "Database error"
+    });
+  })
+})
 
 describe("Update Product Controller Test", () => {
   beforeEach(() => {
