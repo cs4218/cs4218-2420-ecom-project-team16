@@ -5,4 +5,4 @@ node_modules
 /playwright/.cache/
 jest.backend.config.js
 jest.frontend.config.js
-/coverage/
+coverage
