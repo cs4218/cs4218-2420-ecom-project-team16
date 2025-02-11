@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { createProductController, getProductController, updateProductController } from "./productController";
+import { createProductController, getProductController, getSingleProductController, updateProductController } from "./productController";
 import productModel from "../models/productModel";
 import fs from "fs"
 import braintree from "braintree";
@@ -34,7 +34,7 @@ beforeEach(() => {
     save: jest.fn().mockResolvedValue(true),
   };
   mockReq = {
-    params: { pid: "someProductId" },
+    params: { pid: "someProductId", slug: "updated-product" },
     fields: {
       name: "Updated product",
       description: "Updated description",
@@ -201,7 +201,6 @@ describe("Create Product Controller Test", () => {
 })
 
 describe("Get Product Controller Test", () => {
-  let mockQueryChain;
   let mockProducts;
 
   beforeEach(() => {
@@ -331,6 +330,83 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       message: "Erorr in getting products",
+      error: "Database error"
+    });
+  })
+})
+
+describe("Get Single Product Controller Test", () => {
+  let mockProducts;
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+
+    mockProducts = [
+      {
+        name: "Product 1",
+        slug: "product-1",
+        description: "Description for product 1",
+        price: 100,
+        category: {
+          _id: new mongoose.Types.ObjectId(),
+          name: "Category 1"
+        },
+        quantity: 10,
+        photo: {
+          data: Buffer.from("mock-image-1"),
+          contentType: "image/jpeg"
+        },
+        shipping: true,
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01")
+      }
+    ];
+
+    // Set up the mock query chain that actually returns the mock products
+    const mockFindOne = jest.fn().mockReturnThis();
+    const mockSelect = jest.fn().mockReturnThis();
+    const mockPopulate = jest.fn().mockResolvedValue(mockProducts);
+
+    // Attach all methods to the find method
+    mockFindOne.populate = mockPopulate;
+    mockFindOne.select = mockSelect;
+
+    productModel.findOne = jest.fn().mockReturnValue(mockFindOne);
+
+  })
+  
+  test("should get product if exists", async () => {
+    await getSingleProductController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findOne).toHaveBeenCalledWith({ slug: "updated-product"});
+    
+    const findResult = productModel.findOne();
+    expect(findResult.select).toHaveBeenCalledWith("-photo");
+    expect(findResult.populate).toHaveBeenCalledWith("category");
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      message: "Single Product Fetched",
+      product: mockProducts
+    });
+  })
+
+  test("should handle error if product non-existent", async () => {
+    const errorFindOne = jest.fn().mockReturnThis();
+    errorFindOne.select = jest.fn().mockReturnThis();
+    errorFindOne.populate = jest.fn().mockRejectedValue(new Error("Database error"));
+    
+    productModel.findOne = jest.fn().mockReturnValue(errorFindOne);
+
+    await getSingleProductController(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Eror while getitng single product",
       error: "Database error"
     });
   })
