@@ -30,7 +30,9 @@ export default {
   collectCoverageFrom: ["client/src/pages/Auth/**", 
   "client/src/pages/user/Profile.js", 
   "client/src/pages/admin/Users.js",
-  "/client/src/components/AdminMenu.js"],
+  "client/src/components/AdminMenu.js",
+  "client/src/pages/admin/AdminDashboard.js",
+  "client/src/pages/admin/AdminOrders.js"],
   coverageThreshold: {
     global: {
       lines: 100,
