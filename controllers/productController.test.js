@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { createProductController, getProductController, getSingleProductController, updateProductController } from "./productController";
+import { createProductController, getProductController, getSingleProductController, productPhotoController, updateProductController } from "./productController";
 import productModel from "../models/productModel";
 import fs from "fs"
 import braintree from "braintree";
@@ -52,7 +52,8 @@ beforeEach(() => {
   }
   mockRes = {
     status: jest.fn().mockReturnThis(),
-    send: jest.fn()
+    send: jest.fn(),
+    set: jest.fn()
   }
 
   fs.readFileSync.mockReturnValue(Buffer.from("fakeImageData"))
@@ -409,6 +410,74 @@ describe("Get Single Product Controller Test", () => {
       message: "Eror while getitng single product",
       error: "Database error"
     });
+  })
+})
+
+describe("Get Single Product Photo Controller Test", () => {
+  let mockFindById
+  beforeEach(() => {
+    // Set up the mock query chain that actually returns the mock products
+    mockFindById = jest.fn().mockReturnThis();
+    const mockSelect = jest.fn().mockResolvedValue({
+      photo: {
+        data: Buffer.from("fakeImageData"),
+        contentType: "image/jpeg"
+      }
+    });
+
+    // Attach all methods to the find method
+    mockFindById.select = mockSelect;
+
+    productModel.findById = jest.fn().mockReturnValue(mockFindById);
+  })
+
+  test("should get photo if product photo exists", async () => {
+    await productPhotoController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findById).toHaveBeenCalledWith("someProductId")
+
+    const findByIdResult = productModel.findById();
+    expect(findByIdResult.select).toHaveBeenCalledWith("photo")
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.set).toHaveBeenCalledWith("Content-type", "image/jpeg")
+    expect(mockRes.send).toHaveBeenCalledWith(Buffer.from("fakeImageData"))
+  })
+
+  test("should handle error if product has no photo", async () => {
+    // Set photo to be null
+    mockFindById.select = jest.fn().mockResolvedValue({})
+
+    await productPhotoController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findById).toHaveBeenCalledWith("someProductId")
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(500)
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Erorr while getting photo",
+      error: expect.any(String)
+    })
+  })
+
+  test("should handle database error", async () => {
+    mockFindById.select = jest.fn().mockRejectedValue(new Error("Database error"));
+    await productPhotoController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findById).toHaveBeenCalledWith("someProductId")
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(500)
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Erorr while getting photo",
+      error: "Database error",
+    })
   })
 })
 
