@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { createProductController, getProductController, getSingleProductController, productPhotoController, updateProductController } from "./productController";
+import { createProductController, deleteProductController, getProductController, getSingleProductController, productPhotoController, updateProductController } from "./productController";
 import productModel from "../models/productModel";
 import fs from "fs"
 import braintree from "braintree";
@@ -477,6 +477,58 @@ describe("Get Single Product Photo Controller Test", () => {
       success: false,
       message: "Erorr while getting photo",
       error: "Database error",
+    })
+  })
+})
+
+describe("Delete Product Controller Test", () => {
+  let mockFindByIdAndDelete
+  let mockSelect
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+
+    mockFindByIdAndDelete = jest.fn().mockReturnThis()
+    mockSelect = jest.fn().mockResolvedValue({})
+    mockFindByIdAndDelete.select = mockSelect
+
+    productModel.findByIdAndDelete = jest.fn().mockReturnValue(mockFindByIdAndDelete)
+  })
+
+  test("should delete product if exists or not", async () => {
+    await deleteProductController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("someProductId")
+
+    const findByIdAndDeleteResult = productModel.findByIdAndDelete()
+    expect(findByIdAndDeleteResult.select).toHaveBeenCalledWith("-photo")
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      message: "Product Deleted successfully",
+    })
+  })
+
+  test("should handle database error", async () => {
+    mockFindByIdAndDelete.select = jest.fn().mockRejectedValue(new Error("Database error"));
+
+    await deleteProductController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("someProductId")
+
+    const findByIdAndDeleteResult = productModel.findByIdAndDelete()
+    expect(findByIdAndDeleteResult.select).toHaveBeenCalledWith("-photo")
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(500)
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Error while deleting product",
+      error: "Database Error"
     })
   })
 })
