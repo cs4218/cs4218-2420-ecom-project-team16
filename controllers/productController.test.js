@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { createProductController, deleteProductController, getProductController, getSingleProductController, productPhotoController, updateProductController } from "./productController";
+import { createProductController, deleteProductController, getProductController, getSingleProductController, productCountController, productPhotoController, updateProductController } from "./productController";
 import productModel from "../models/productModel";
 import fs from "fs"
 import braintree from "braintree";
@@ -670,4 +670,47 @@ describe("Update Product Controller Test", () => {
       message: "Error in Updte product",
     });
   });
+})
+
+describe("Product Count Controller Test", () => {
+  test("should get correct count", async () => {
+    mockFind = jest.fn().mockReturnThis()
+    mockFind.estimatedDocumentCount = jest.fn().mockResolvedValue(12)
+    productModel.find = jest.fn().mockReturnValue(mockFind)
+
+    await productCountController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.find).toHaveBeenCalledWith({})
+    mockFindResult = productModel.find()
+    expect(mockFindResult.estimatedDocumentCount).toHaveBeenCalled()
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      total: 12
+    })
+  })
+
+  test("should handle database error", async () => {
+    mockFind = jest.fn().mockReturnThis()
+    mockFind.estimatedDocumentCount = jest.fn().mockRejectedValue(dbError)
+    productModel.find = jest.fn().mockReturnValue(mockFind)
+
+    await productCountController(mockReq, mockRes)
+    
+    // Verify query chain methods were called
+    expect(productModel.find).toHaveBeenCalledWith({})
+    mockFindResult = productModel.find()
+    expect(mockFindResult.estimatedDocumentCount).toHaveBeenCalled()
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+    expect(mockRes.send).toHaveBeenCalledWith({
+      message: "Error in product count",
+      error: "Database Error",
+      success: false,
+    })
+  })
 })
