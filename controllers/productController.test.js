@@ -23,6 +23,7 @@ let mockCategory;
 let mockProduct;
 let mockReq;
 let mockRes;
+let dbError
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -56,20 +57,13 @@ beforeEach(() => {
     set: jest.fn()
   }
 
-  fs.readFileSync.mockReturnValue(Buffer.from("fakeImageData"))
-  productModel.findByIdAndUpdate.mockResolvedValue({
-    _id: "someProductId",
-    ...mockReq.fields,
-    photo: {
-        data: Buffer.from("fakeImageData"),
-        contentType: "image/jpeg"
-    }
-  });
+  dbError = new Error("Database error")
 })
 
 describe("Create Product Controller Test", () => {
   beforeEach(() => {
     productModel.mockImplementation(() => mockProduct)
+    fs.readFileSync.mockReturnValue(Buffer.from("fakeImageData"))
   })
 
   test("should create product with image successfully", async () => {
@@ -187,7 +181,6 @@ describe("Create Product Controller Test", () => {
   });
 
   test("should handle database errors", async () => {
-    const dbError = new Error("Database error");
     mockProduct.save.mockRejectedValue(dbError);
 
     await createProductController(mockReq, mockRes);
@@ -321,7 +314,7 @@ describe("Get Product Controller Test", () => {
     errorFind.populate = jest.fn().mockReturnThis();
     errorFind.select = jest.fn().mockReturnThis();
     errorFind.limit = jest.fn().mockReturnThis();
-    errorFind.sort = jest.fn().mockRejectedValue(new Error("Database error"));
+    errorFind.sort = jest.fn().mockRejectedValue(dbError);
     
     productModel.find = jest.fn().mockReturnValue(errorFind);
 
@@ -395,10 +388,10 @@ describe("Get Single Product Controller Test", () => {
     });
   })
 
-  test("should handle error if product non-existent", async () => {
+  test("should handle database error", async () => {
     const errorFindOne = jest.fn().mockReturnThis();
     errorFindOne.select = jest.fn().mockReturnThis();
-    errorFindOne.populate = jest.fn().mockRejectedValue(new Error("Database error"));
+    errorFindOne.populate = jest.fn().mockRejectedValue(dbError);
     
     productModel.findOne = jest.fn().mockReturnValue(errorFindOne);
 
@@ -465,7 +458,7 @@ describe("Get Single Product Photo Controller Test", () => {
   })
 
   test("should handle database error", async () => {
-    mockFindById.select = jest.fn().mockRejectedValue(new Error("Database error"));
+    mockFindById.select = jest.fn().mockRejectedValue(dbError);
     await productPhotoController(mockReq, mockRes)
 
     // Verify query chain methods were called
@@ -513,7 +506,7 @@ describe("Delete Product Controller Test", () => {
   })
 
   test("should handle database error", async () => {
-    mockFindByIdAndDelete.select = jest.fn().mockRejectedValue(new Error("Database error"));
+    mockFindByIdAndDelete.select = jest.fn().mockRejectedValue(dbError);
 
     await deleteProductController(mockReq, mockRes)
 
@@ -536,6 +529,7 @@ describe("Delete Product Controller Test", () => {
 describe("Update Product Controller Test", () => {
   beforeEach(() => {
     productModel.findByIdAndUpdate.mockResolvedValue(mockProduct);
+    fs.readFileSync.mockReturnValue(Buffer.from("fakeImageData"))
   });
 
   test("should update product successfully", async () => {
@@ -666,8 +660,8 @@ describe("Update Product Controller Test", () => {
     });
   });
 
-  test("should return error if unexpected error", async () => {
-    productModel.findByIdAndUpdate.mockRejectedValue(new Error("Database error"));
+  test("should handle database error", async () => {
+    productModel.findByIdAndUpdate.mockRejectedValue(dbError);
     await updateProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
