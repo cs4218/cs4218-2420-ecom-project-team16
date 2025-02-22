@@ -8,7 +8,8 @@ export default {
   // which test to run
   // testMatch: ["<rootDir>/controllers/*.test.js"],
   // testMatch: ["<rootDir>/config/*.test.js"],
-  testMatch: ["<rootDir>/helpers/*.test.js"],
+  // testMatch: ["<rootDir>/helpers/*.test.js"],
+  testMatch: ["<rootDir>/middlewares/*.test.js"],
 
   // jest code coverage
   collectCoverage: true,
