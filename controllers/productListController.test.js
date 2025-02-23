@@ -1,5 +1,5 @@
 import productModel from "../models/productModel.js";
-import { productListController } from "../controllers/productController.js";
+import { productListController } from "./productController.js";
 
 jest.mock("../models/productModel.js");
 
