@@ -475,9 +475,10 @@ describe("Get Single Product Photo Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith(Buffer.from("fakeImageData"))
   })
 
-  test("should handle error if product has no photo", async () => {
-    // Set photo to be null
-    mockFindById.select = jest.fn().mockResolvedValue({})
+  test("should handle case if product has no photo", async () => {
+    jest.spyOn(productModel, "findById").mockReturnValue({
+      select: jest.fn().mockResolvedValue({ photo: { data: null } }),
+    });
 
     await productPhotoController(mockReq, mockRes)
 
@@ -485,12 +486,11 @@ describe("Get Single Product Photo Controller Test", () => {
     expect(productModel.findById).toHaveBeenCalledWith("someProductId")
 
     // Verify response
-    expect(mockRes.status).toHaveBeenCalledWith(500)
+    expect(mockRes.status).toHaveBeenCalledWith(404);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Erorr while getting photo",
-      error: expect.any(String)
-    })
+      message: "Photo not found for this product",
+    });
   })
 
   test("should handle database error", async () => {
@@ -566,6 +566,7 @@ describe("Update Product Controller Test", () => {
   beforeEach(() => {
     productModel.findByIdAndUpdate.mockResolvedValue(mockProduct);
     fs.readFileSync.mockReturnValue(Buffer.from("fakeImageData"))
+    jest.spyOn(console, 'log').mockImplementation(() => {})
   });
 
   test("should update product successfully", async () => {
@@ -696,9 +697,10 @@ describe("Update Product Controller Test", () => {
     });
   });
 
-  test("should handle database error", async () => {
+  test("should handle findByIdAndUpdate error", async () => {
     productModel.findByIdAndUpdate.mockRejectedValue(dbError);
     await updateProductController(mockReq, mockRes);
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
@@ -706,6 +708,40 @@ describe("Update Product Controller Test", () => {
       message: "Error in Updte product",
     });
   });
+
+  test("should handle file read error", async () => {
+    jest.spyOn(fs, "readFileSync").mockImplementation(() => {
+      throw new Error("Error reading image data");
+    });
+
+    await updateProductController(mockReq, mockRes);
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      error: expect.any(Error),
+      message: "Error in Updte product",
+    });
+  })
+
+  test("should handle save product error", async () => {
+    mockProduct = {
+      photo: { data: null, contentType: null },
+      slug: 'updated-product',
+      save: jest.fn().mockRejectedValueOnce(new Error("Error in Updte product")),
+    };
+
+    productModel.findByIdAndUpdate.mockResolvedValue(mockProduct);
+
+    await updateProductController(mockReq, mockRes);
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      error: expect.any(Error),
+      message: "Error in Updte product",
+    });
+  })
 })
 
 describe("Product Count Controller Test", () => {
