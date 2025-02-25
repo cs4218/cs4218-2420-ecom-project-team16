@@ -193,7 +193,7 @@ describe("Create Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   })
 
@@ -206,7 +206,7 @@ describe("Create Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       error: dbError,
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   });
 })
@@ -455,7 +455,7 @@ describe("Get Single Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Eror while getitng single product",
+      message: "Error while getting single product",
       error: "Database error"
     });
   })
@@ -725,7 +725,7 @@ describe("Update Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in Updte product",
+      message: "Error in updating product",
     });
   });
 
@@ -740,7 +740,7 @@ describe("Update Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in Updte product",
+      message: "Error in updating product",
     });
   })
 
@@ -748,7 +748,7 @@ describe("Update Product Controller Test", () => {
     mockProduct = {
       photo: { data: null, contentType: null },
       slug: 'updated-product',
-      save: jest.fn().mockRejectedValueOnce(new Error("Error in Updte product")),
+      save: jest.fn().mockRejectedValueOnce(new Error("Error in updating product")),
     };
 
     productModel.findByIdAndUpdate.mockResolvedValue(mockProduct);
@@ -759,7 +759,7 @@ describe("Update Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in Updte product",
+      message: "Error in updating product",
     });
   })
 })
