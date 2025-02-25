@@ -27,6 +27,7 @@ let dbError
 
 beforeEach(() => {
   jest.clearAllMocks()
+  jest.spyOn(console, 'log').mockImplementation(() => {})
 
   mockCategory = {_id: "someCategoryId", name: "Category", slug: "test-category"}
   mockProduct = {
@@ -337,6 +338,7 @@ describe("Get Product Controller Test", () => {
 
     await getProductController(mockReq, mockRes);
 
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
@@ -433,6 +435,7 @@ describe("Get Single Product Controller Test", () => {
 
     await getSingleProductController(mockReq, mockRes);
 
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
@@ -501,6 +504,7 @@ describe("Get Single Product Photo Controller Test", () => {
     expect(productModel.findById).toHaveBeenCalledWith("someProductId")
 
     // Verify response
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
     expect(mockRes.status).toHaveBeenCalledWith(500)
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
@@ -553,6 +557,7 @@ describe("Delete Product Controller Test", () => {
     expect(findByIdAndDeleteResult.select).toHaveBeenCalledWith("-photo")
 
     // Verify response
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
     expect(mockRes.status).toHaveBeenCalledWith(500)
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
@@ -566,7 +571,6 @@ describe("Update Product Controller Test", () => {
   beforeEach(() => {
     productModel.findByIdAndUpdate.mockResolvedValue(mockProduct);
     fs.readFileSync.mockReturnValue(Buffer.from("fakeImageData"))
-    jest.spyOn(console, 'log').mockImplementation(() => {})
   });
 
   test("should update product successfully", async () => {
@@ -769,7 +773,6 @@ describe("Product Count Controller Test", () => {
     mockFind = jest.fn().mockReturnThis()
     mockFind.estimatedDocumentCount = jest.fn().mockRejectedValue(dbError)
     productModel.find = jest.fn().mockReturnValue(mockFind)
-
     await productCountController(mockReq, mockRes)
     
     // Verify query chain methods were called
@@ -778,6 +781,7 @@ describe("Product Count Controller Test", () => {
     expect(mockFindResult.estimatedDocumentCount).toHaveBeenCalled()
 
     // Verify response
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
     expect(mockRes.status).toHaveBeenCalledWith(400)
     expect(mockRes.send).toHaveBeenCalledWith({
       message: "Error in product count",
