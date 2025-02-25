@@ -148,7 +148,7 @@ describe("UpdateProduct", () => {
         expect(axios.delete).toHaveBeenCalledWith(
             "/api/v1/product/delete-product/1"
         );
-        expect(toast.success).toHaveBeenCalledWith("Product DEleted Succfully");
+        expect(toast.success).toHaveBeenCalledWith("Product Deleted Successfully");
         expect(mockNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
         });
     })

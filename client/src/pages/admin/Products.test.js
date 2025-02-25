@@ -79,7 +79,7 @@ describe("Products", () => {
 
         await waitFor(() => {
             expect(console.log).toHaveBeenCalledWith(expect.any(Error)); // Check if error is logged
-            expect(toast.error).toHaveBeenCalledWith("Someething Went Wrong")
+            expect(toast.error).toHaveBeenCalledWith("Something Went Wrong")
         });
     })
 })
