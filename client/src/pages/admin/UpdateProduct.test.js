@@ -45,6 +45,8 @@ const mockCategories = {
 describe("UpdateProduct", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        axios.get = jest.fn()
+        axios.delete = jest.fn()
     })
 
     test("renders the product successfully", async () => {
@@ -91,8 +93,37 @@ describe("UpdateProduct", () => {
               "/api/v1/product/update-product/1",
               expect.any(FormData)
             );
+            expect(toast.error).not.toHaveBeenCalled()
             expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
             expect(mockNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
+        });
+    })
+
+    test("updates the product unsuccessfully", async () => {
+        axios.get.mockResolvedValueOnce({ data: mockProduct })
+        axios.get.mockResolvedValueOnce({ data: mockCategories })
+        axios.put.mockResolvedValueOnce({ data: { success: false, message: "Product updated unsuccessfully" }})
+
+        render(
+            <MemoryRouter>
+                <UpdateProduct/>
+            </MemoryRouter>
+        )
+
+        await waitFor(() => screen.getByDisplayValue("Test Product"));
+
+        fireEvent.change(screen.getByPlaceholderText("write a name"), {
+            target: { value: '' },
+        });
+
+        fireEvent.click(screen.getByText("UPDATE PRODUCT"));
+
+        await waitFor(() => {
+            expect(axios.put).toHaveBeenCalledWith(
+              "/api/v1/product/update-product/1",
+              expect.any(FormData)
+            );
+            expect(toast.error).toHaveBeenCalledWith("Product updated unsuccessfully");
         });
     })
 
@@ -109,7 +140,7 @@ describe("UpdateProduct", () => {
 
         await waitFor(() => screen.getByDisplayValue("Test Product"));
 
-        window.prompt = jest.fn(() => "Yes");
+        const promptMock = jest.spyOn(window, "prompt").mockReturnValue("Yes");
 
         fireEvent.click(screen.getByText("DELETE PRODUCT"));
 
@@ -122,9 +153,33 @@ describe("UpdateProduct", () => {
         });
     })
 
+    test("cancel product deletion", async () => {
+        axios.get.mockResolvedValueOnce({ data: mockProduct })
+        axios.get.mockResolvedValueOnce({ data: mockCategories })
+        axios.delete.mockResolvedValueOnce({ data: { success: true } });
+
+        render(
+            <MemoryRouter>
+                <UpdateProduct/>
+            </MemoryRouter>
+        )
+
+        await waitFor(() => screen.getByDisplayValue("Test Product"));
+
+        const promptMock = jest.spyOn(window, "prompt").mockReturnValue(null); // cancel was clicked
+
+        fireEvent.click(screen.getByText("DELETE PRODUCT"));
+
+        await waitFor(() => {
+            expect(axios.delete).not.toHaveBeenCalled()
+            expect(mockNavigate).not.toHaveBeenCalled()
+        });
+    })
+
     test("handles API error in getting product gracefully", async () => {
         axios.get.mockRejectedValueOnce(new Error("Database error in getting product"));
-        jest.spyOn(console, 'log')
+        
+        jest.spyOn(console, 'log').mockImplementation(() => {})
 
         render(
             <MemoryRouter>
@@ -134,13 +189,15 @@ describe("UpdateProduct", () => {
 
         await waitFor(() => {
             expect(console.log).toHaveBeenCalledWith(expect.any(Error)); // Check if error is logged
+            expect(mockNavigate).not.toHaveBeenCalled()
         });
     })
 
     test("handles API error in getting categories gracefully", async () => {
         axios.get.mockResolvedValueOnce({ data: mockProduct });
         axios.get.mockRejectedValueOnce(new Error("Database error in getting categories"));
-        jest.spyOn(console, 'log')
+        
+        jest.spyOn(console, 'log').mockImplementation(() => {})
 
         render(
             <MemoryRouter>
@@ -151,6 +208,34 @@ describe("UpdateProduct", () => {
         await waitFor(() => {
             expect(console.log).toHaveBeenCalledWith(expect.any(Error)); // Check if error is logged
             expect(toast.error).toHaveBeenCalledWith("Something wwent wrong in getting catgeory")
+            expect(mockNavigate).not.toHaveBeenCalled()
+        });
+    })
+
+    test("handles API error in deleting product gracefully", async () => {
+        axios.get.mockResolvedValueOnce({ data: mockProduct });
+        axios.get.mockResolvedValueOnce({ data: mockCategories })
+        axios.delete.mockRejectedValueOnce(new Error("Database error in deleting product"));
+        
+        jest.spyOn(console, 'log').mockImplementation(() => {})
+
+        render(
+            <MemoryRouter>
+                <UpdateProduct/>
+            </MemoryRouter>
+        )
+
+        await waitFor(() => screen.getByDisplayValue("Test Product"));
+
+        const promptMock = jest.spyOn(window, "prompt").mockReturnValue('Yes');
+
+        fireEvent.click(screen.getByText("DELETE PRODUCT"));
+        expect(promptMock).toHaveBeenCalled()
+        await waitFor(() => {
+            expect(axios.delete).toHaveBeenCalledWith("/api/v1/product/delete-product/1")
+            expect(console.log).toHaveBeenCalledWith(expect.any(Error)); // Check if error is logged
+            expect(toast.error).toHaveBeenCalledWith("Something went wrong")
+            expect(mockNavigate).not.toHaveBeenCalled()
         });
     })
 })
