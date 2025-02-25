@@ -181,7 +181,23 @@ describe("Create Product Controller Test", () => {
     });
   });
 
-  test("should handle database errors", async () => {
+  test("should handle file read error", async () => {
+    jest.spyOn(fs, "readFileSync").mockImplementation(() => {
+      throw new Error("Error reading image data");
+    });
+
+    await createProductController(mockReq, mockRes);
+
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: false,
+      error: expect.any(Error),
+      message: "Error in crearing product",
+    });
+  })
+
+  test("should handle save product error", async () => {
     mockProduct.save.mockRejectedValue(dbError);
 
     await createProductController(mockReq, mockRes);
