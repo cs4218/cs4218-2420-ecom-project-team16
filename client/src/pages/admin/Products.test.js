@@ -69,7 +69,7 @@ describe("Products", () => {
 
     test("handles API errors gracefully", async () => {
         axios.get.mockResolvedValueOnce(new Error("Database error"))
-        jest.spyOn(console, 'log')
+        jest.spyOn(console, 'log').mockImplementation(() => {})
 
         render(
             <MemoryRouter>
