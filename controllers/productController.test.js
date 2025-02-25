@@ -256,7 +256,7 @@ describe("Get Product Controller Test", () => {
 
   })
   
-  test("should get all products successfully", async () => {
+  test("should get all products successfully (brittle)", async () => {
     await getProductController(mockReq, mockRes);
 
     // Verify query chain methods were called
@@ -278,6 +278,32 @@ describe("Get Product Controller Test", () => {
     });
   })
 
+  test("should get all products successfully (generic)", async () => {
+    await getProductController(mockReq, mockRes);
+
+    // Verify query chain methods were called
+    expect(productModel.find).toHaveBeenCalledWith({});
+    
+    const findResult = productModel.find();
+    expect(findResult.populate).toHaveBeenCalledWith(expect.any(String));
+    expect(findResult.select).toHaveBeenCalledWith(expect.stringMatching(/^-?\w+$/));
+    expect(findResult.limit).toHaveBeenCalledWith(expect.any(Number))
+
+    const limitArg = findResult.limit.mock.calls[0][0];
+    expect(limitArg).toBeGreaterThanOrEqual(0);
+
+    expect(findResult.sort).toHaveBeenCalledWith({ createdAt: -1 });
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      counTotal: mockProducts.length,
+      message: "ALlProducts ",
+      products: mockProducts
+    });
+  })
+  
   test("should handle empty product list", async () => {
     // Mock empty results
     const emptyFind = jest.fn().mockReturnThis();
@@ -289,15 +315,6 @@ describe("Get Product Controller Test", () => {
     productModel.find = jest.fn().mockReturnValue(emptyFind);
 
     await getProductController(mockReq, mockRes);
-
-    // Verify query chain methods were called
-    expect(productModel.find).toHaveBeenCalledWith({});
-    
-    const findResult = productModel.find();
-    expect(findResult.populate).toHaveBeenCalledWith("category");
-    expect(findResult.select).toHaveBeenCalledWith("-photo");
-    expect(findResult.limit).toHaveBeenCalledWith(12);
-    expect(findResult.sort).toHaveBeenCalledWith({ createdAt: -1 });
 
     // Verify response
     expect(mockRes.status).toHaveBeenCalledWith(200);
