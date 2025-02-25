@@ -303,7 +303,7 @@ describe("Get Product Controller Test", () => {
       products: mockProducts
     });
   })
-  
+
   test("should handle empty product list", async () => {
     // Mock empty results
     const emptyFind = jest.fn().mockReturnThis();
@@ -385,7 +385,7 @@ describe("Get Single Product Controller Test", () => {
     productModel.findOne = jest.fn().mockReturnValue(mockFindOne);
 
   })
-  
+
   test("should get product if exists", async () => {
     await getSingleProductController(mockReq, mockRes)
 
@@ -395,6 +395,25 @@ describe("Get Single Product Controller Test", () => {
     const findResult = productModel.findOne();
     expect(findResult.select).toHaveBeenCalledWith("-photo");
     expect(findResult.populate).toHaveBeenCalledWith("category");
+
+    // Verify response
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      success: true,
+      message: "Single Product Fetched",
+      product: mockProducts
+    });
+  })
+
+  test("should get product if exists (generic)", async () => {
+    await getSingleProductController(mockReq, mockRes)
+
+    // Verify query chain methods were called
+    expect(productModel.findOne).toHaveBeenCalledWith({ slug: "updated-product"});
+    
+    const findResult = productModel.findOne();
+    expect(findResult.select).toHaveBeenCalledWith(expect.stringMatching(/^-?\w+$/));
+    expect(findResult.populate).toHaveBeenCalledWith(expect.any(String));
 
     // Verify response
     expect(mockRes.status).toHaveBeenCalledWith(200);
