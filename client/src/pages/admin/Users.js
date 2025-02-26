@@ -12,7 +12,7 @@ const Users = () => {
       const response = await axios.get("/api/v1/auth/users"); // Adjust URL to your backend
       setUsers(response.data); // Update state with users
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching users: ", error);
     }
   };
 
