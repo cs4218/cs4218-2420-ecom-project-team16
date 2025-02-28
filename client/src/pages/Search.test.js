@@ -28,14 +28,14 @@ describe("Search Page", () => {
   });
 
   test("displays search results when products exist", () => {
-    jest.doMock("../context/search", () => ({
+    jest.mock("../context/search", () => ({
       useSearch: jest.fn(() => [
         {
           keyword: "test",
           results: [
             {
               _id: "1",
-              name: "Product A",
+              name: "Mock Product",
               description: "A great product",
               price: 100,
             },
@@ -54,7 +54,7 @@ describe("Search Page", () => {
     );
 
     expect(screen.getByText("Found 1")).toBeInTheDocument();
-    expect(screen.getByText("Product A")).toBeInTheDocument();
+    expect(screen.getByText("Mock Product")).toBeInTheDocument();
     expect(screen.getByText("$ 100")).toBeInTheDocument();
   });
 });

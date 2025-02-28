@@ -63,8 +63,8 @@ describe("Dashboard Component", () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByText(/John Doe/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/john@example.com/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/123 Test Street/i)).not.toBeInTheDocument();
+    expect(screen.queryByText("mock name")).not.toBeInTheDocument();
+    expect(screen.queryByText("mock email")).not.toBeInTheDocument();
+    expect(screen.queryByText("mock address")).not.toBeInTheDocument();
   });
 });

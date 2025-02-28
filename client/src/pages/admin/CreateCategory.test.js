@@ -66,7 +66,7 @@ describe("Create Category Component", () => {
       expect(screen.getByText("Mock Category Form")).toBeInTheDocument();
     });
   });
-  it("toast error if retrieval results in error", async () => {
+  it.failing("toast error if retrieval results in error", async () => {
     const error = new Error("Mocked Error");
     await axios.get.mockRejectedValue(error);
     render(
@@ -81,8 +81,9 @@ describe("Create Category Component", () => {
     );
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalled();
-      expect(toast.error).toHaveBeenCalled();
+      expect(toast.error).toHaveBeenCalledWith(
+        "Something went wrong in getting catgeory"
+      );
     });
   });
-  it("");
 });

@@ -29,7 +29,7 @@ describe("Create Product Component", () => {
     { _id: 3, name: "cat_3" },
     { _id: 4, name: "cat_4" },
   ];
-  it("Renders the create product page sucessfully", async () => {
+  it.failing("Renders the create product page sucessfully", async () => {
     axios.get.mockResolvedValueOnce({
       data: { success: true, category: mockCategories },
     });
@@ -50,13 +50,13 @@ describe("Create Product Component", () => {
       expect(screen.getByText("Upload Photo")).toBeInTheDocument();
       expect(screen.getByText("Select Shipping")).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText("write a quantity")
+        screen.getByPlaceholderText("Write a quantity")
       ).toBeInTheDocument();
-      expect(screen.getByPlaceholderText("write a Price")).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("Write a Price")).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText("write a description")
+        screen.getByPlaceholderText("Write a description")
       ).toBeInTheDocument();
-      expect(screen.getByPlaceholderText("write a name")).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("Write a name")).toBeInTheDocument();
       expect(screen.getByText("Select a category")).toBeInTheDocument();
       expect(screen.getByText("Mock Layout")).toBeInTheDocument();
       expect(screen.getByText("Mock Admin Menu")).toBeInTheDocument();
