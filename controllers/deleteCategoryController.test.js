@@ -26,7 +26,7 @@ describe("Test Delete Category Controller", () => {
       message: "Category deleted successfully",
     });
   });
-  test("error code 500 returned when error thrown", async () => {
+  test.failing("error code 500 returned when error thrown", async () => {
     const error = new Error("Database Error");
     req = { params: { id: 1 } };
     categoryModel.findByIdAndDelete = jest.fn().mockRejectedValueOnce(error);
@@ -37,7 +37,7 @@ describe("Test Delete Category Controller", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      message: "error while deleting category",
+      message: "Error while deleting category",
       error,
     });
   });

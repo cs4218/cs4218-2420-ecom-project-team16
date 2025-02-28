@@ -26,7 +26,7 @@ describe("Test Category Controller", () => {
       category: [],
     });
   });
-  test("category not created when category already exists", async () => {
+  test("Error code and message when error from model", async () => {
     const error = new Error("Database Error");
     categoryModel.find = jest.fn().mockRejectedValueOnce(error);
 

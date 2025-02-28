@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { jest, test } from "@jest/globals";
 import categoryModel from "../models/categoryModel.js";
 import slugify from "slugify";
 import { updateCategoryController } from "./categoryController.js";
@@ -34,6 +34,12 @@ describe("Test Create Category Controller", () => {
       message: "Category Updated Successfully",
       category: "Mock Old Category",
     });
+  });
+  test("does not create when missing name", async () => {
+    req = {};
+    await updateCategoryController(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalled();
   });
   test("status 500 on error", async () => {
     const error = new Error("Database Error");

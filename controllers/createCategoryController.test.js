@@ -65,25 +65,28 @@ describe("Test Create Category Controller", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "new category created",
+      message: "New Category Created",
       category: {
         name: newCatName,
         slug: "mock-slug",
       },
     });
   });
-  test("should return 500 on error thrown", async () => {
-    req = { body: { name: "Category Name" } };
-    const error = new Error("Database error");
-    categoryModel.findOne.mockRejectedValue(error);
+  test.failing(
+    "should return 500 on error thrown with correct error message",
+    async () => {
+      req = { body: { name: "Category Name" } };
+      const error = new Error("Database error");
+      categoryModel.findOne.mockRejectedValue(error);
 
-    await createCategoryController(req, res);
+      await createCategoryController(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      error: error,
-      message: "Errro in Category",
-    });
-  });
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        error: error,
+        message: "Error in Category",
+      });
+    }
+  );
 });

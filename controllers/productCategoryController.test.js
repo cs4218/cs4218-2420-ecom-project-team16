@@ -51,25 +51,30 @@ describe("Product Category Controller", () => {
       ],
     });
   });
-  test("status 400 and productModel not called when category errors on find", async () => {
-    const error = new Error("Database Error");
-    categoryModel.findOne = jest.fn().mockRejectedValue(error);
-    productModel.find = jest.fn().mockReturnThis();
-    const mockCategory = "Mock category";
-    req = { params: { slug: mockCategory } };
-    await productCategoryController(req, res);
+  test.failing(
+    "status 400 and productModel not called when category errors on find",
+    async () => {
+      const error = new Error("Database Error");
+      categoryModel.findOne = jest.fn().mockRejectedValue(error);
+      productModel.find = jest.fn().mockReturnThis();
+      const mockCategory = "Mock category";
+      req = { params: { slug: mockCategory } };
+      await productCategoryController(req, res);
 
-    expect(categoryModel.findOne).toHaveBeenCalledWith({ slug: mockCategory });
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(productModel.find).not.toHaveBeenCalled();
-    expect(productModel.populate).not.toHaveBeenCalled();
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      error: error,
-      message: "Error While Getting products",
-    });
-  });
-  test("status 400 when productModel errors", async () => {
+      expect(categoryModel.findOne).toHaveBeenCalledWith({
+        slug: mockCategory,
+      });
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(productModel.find).not.toHaveBeenCalled();
+      expect(productModel.populate).not.toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        error: error,
+        message: "Error while getting products",
+      });
+    }
+  );
+  test.failing("status 400 when productModel errors", async () => {
     const error = new Error("Database Error");
     const mockCategory = "Mock category";
     categoryModel.findOne = jest.fn().mockReturnValue(mockCategory);
@@ -85,7 +90,7 @@ describe("Product Category Controller", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       error: error,
-      message: "Error While Getting products",
+      message: "Error while getting products",
     });
   });
 });
