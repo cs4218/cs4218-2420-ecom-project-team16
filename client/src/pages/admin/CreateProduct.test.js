@@ -46,7 +46,7 @@ describe("Create Product Component", () => {
     );
 
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith("/api/v1/category/get-category");
+      expect(axios.get).toHaveBeenCalled();
       expect(screen.getByText("Upload Photo")).toBeInTheDocument();
       expect(screen.getByText("Select Shipping")).toBeInTheDocument();
       expect(

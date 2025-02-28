@@ -3,8 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import CategoryForm from "./CategoryForm";
 
-const mockSubmit = jest.fn();
-
 describe("Test CategoryForm Component", () => {
   test("calls submit handler when submit button clicked", () => {
     const mockSubmit = jest.fn();
