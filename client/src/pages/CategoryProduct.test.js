@@ -60,7 +60,7 @@ jest.mock("../context/auth", () => ({
             expect(screen.getByText("More Details")).toBeInTheDocument();
         });
     });
-    test("Render More Details Button Page", async () => {
+    test("Click More Details Button redirects", async () => {
         axios.get.mockResolvedValue({
             data: { products: mockProducts, category: mockCategory },
           });

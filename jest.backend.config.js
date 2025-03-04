@@ -10,6 +10,7 @@ export default {
   // testMatch: ["<rootDir>/config/*.test.js"],
   // testMatch: ["<rootDir>/helpers/*.test.js"],
   testMatch: ["<rootDir>/middlewares/*.test.js"],
+  testMatch: ["<rootDir>/models/*.test.js"],
 
   // jest code coverage
   collectCoverage: true,

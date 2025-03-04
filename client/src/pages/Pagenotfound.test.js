@@ -1,6 +1,6 @@
 import React from "react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import Pagenotfound from "./Pagenotfound";
 import "@testing-library/jest-dom/extend-expect";
 
@@ -22,10 +22,10 @@ jest.mock("../context/auth", () => ({
 describe("Test Render of Pagenotfound", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-    })
+    });
 
     test("Render Pagenotfound main text", () => {
-        const { getByText, getByPlaceholderText } = render(
+        const { getByText } = render(
             <MemoryRouter initialEntries={["/Pagenotfound"]}>
               <Routes>
                 <Route path="/Pagenotfound" element={<Pagenotfound />} />
@@ -35,10 +35,10 @@ describe("Test Render of Pagenotfound", () => {
       
           expect(getByText("404")).toBeInTheDocument();
           expect(getByText("Oops ! Page Not Found")).toBeInTheDocument();
-    })
+    });
     
     test("Render Pagenotfound button", () => {
-        const { getByText, getByPlaceholderText } = render(
+        const { getByText } = render(
             <MemoryRouter initialEntries={["/Pagenotfound"]}>
               <Routes>
                 <Route path="/Pagenotfound" element={<Pagenotfound />} />
@@ -48,5 +48,5 @@ describe("Test Render of Pagenotfound", () => {
       
           expect(getByText("Go Back")).toBeInTheDocument();
           expect(getByText("Go Back")).toHaveAttribute("href", "/");
-    })
+    });
 })
