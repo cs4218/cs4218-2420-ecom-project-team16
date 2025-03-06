@@ -163,6 +163,15 @@ describe("Create Product Controller Test", () => {
     });
   });
 
+  test("should return error if price is negative", async () => {
+    mockReq.fields.price = -1;
+    await createProductController(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      error: "Price must be positive"
+    });
+  });
+
   test("should return error if category is missing", async () => {
     mockReq.fields.category = null;
     await createProductController(mockReq, mockRes);
@@ -174,6 +183,15 @@ describe("Create Product Controller Test", () => {
 
   test("should return error if quantity is missing", async () => {
     mockReq.fields.quantity = null;
+    await createProductController(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith({
+      error: "Quantity is Required"
+    });
+  });
+
+  test("should return error if quantity is negative", async () => {
+    mockReq.fields.quantity = -1;
     await createProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
