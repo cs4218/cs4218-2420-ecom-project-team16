@@ -290,7 +290,7 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
       counTotal: mockProducts.length,
-      message: "ALlProducts ",
+      message: "AllProducts ",
       products: mockProducts
     });
   })
@@ -316,7 +316,7 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
       counTotal: mockProducts.length,
-      message: "ALlProducts ",
+      message: "AllProducts ",
       products: mockProducts
     });
   })
@@ -338,7 +338,7 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
       counTotal: 0,
-      message: "ALlProducts ",
+      message: "AllProducts ",
       products: []
     });
   })
@@ -524,7 +524,7 @@ describe("Get Single Product Photo Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(500)
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Erorr while getting photo",
+      message: "Error while getting photo",
       error: "Database error",
     })
   })
