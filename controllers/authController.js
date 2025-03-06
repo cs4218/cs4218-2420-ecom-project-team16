@@ -9,13 +9,13 @@ export const registerController = async (req, res) => {
     const { name, email, password, phone, address, answer } = req.body;
     //validations
     if (!name) {
-      return res.send({ error: "Name is Required" });
+      return res.send({ message: "Name is Required" });
     }
     if (!email) {
       return res.send({ message: "Email is Required" });
     }
-    if (!password) {
-      return res.send({ message: "Password is Required" });
+    if (!password || password?.length < 6) {
+      return res.send({ message: "Password is Required and of at least 6 characters" });
     }
     if (!phone) {
       return res.send({ message: "Phone no is Required" });
@@ -32,9 +32,9 @@ export const registerController = async (req, res) => {
     }
 
     //check user
-    const exisitingUser = await userModel.findOne({ email });
-    //exisiting user
-    if (exisitingUser) {
+    const existingUser = await userModel.findOne({ email });
+    //existing user
+    if (existingUser) {
       return res.status(200).send({
         success: false,
         message: "Already Register please login",
@@ -174,10 +174,9 @@ export const updateProfileController = async (req, res) => {
   try {
     const { name, email, password, address, phone } = req.body;
     const user = await userModel.findById(req.user._id);
-    if (password && password.length < 6) {
+    if (password?.length < 6) {
       return res.json({ error: "Passsword is required and is at least 6 characters long" });
     }
-    // Look into this line again
     const hashedPassword = password ? await hashPassword(password) : undefined;
     const updatedUser = await userModel.findByIdAndUpdate(
       req.user._id,
@@ -198,7 +197,7 @@ export const updateProfileController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       success: false,
-      message: "Error WHile Update profile",
+      message: "Error While Update profile",
       error,
     });
   }

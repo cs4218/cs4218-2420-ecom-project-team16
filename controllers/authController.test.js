@@ -30,6 +30,48 @@ describe("Register Controller Test", () => {
       send: jest.fn(),
     };
   });
+  test("Missing name", async () => {
+    req.body.name = null;
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Name is Required" });
+  })
+
+  test("Missing email", async () => {
+    req.body.email = null;
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Email is Required" });
+  })
+
+
+  test("Missing password", async () => {
+    req.body.password = null;
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Password is Required and of at least 6 characters" });
+  })
+
+  test("Password.length < 6", async () => {
+    req.body.password = "1234";
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Password is Required and of at least 6 characters" });
+  })
+
+  test("Missing phone", async () => {
+    req.body.phone = null;
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Phone no is Required" });
+  })
+
+  test("Missing Address", async () => {
+    req.body.address = null;
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Address is Required" });
+  })
+
+  test("Missing Answer", async () => {
+    req.body.answer = null;
+    await registerController(req, res);
+    expect(res.send).toHaveBeenCalledWith({ message: "Answer is Required" });
+  })
 
   test("user model is not saved for invalid email", async () => {
 
@@ -105,8 +147,19 @@ describe("Login Controller Tests", () => {
     };
   });
 
-  test("Reject login for missing email or password", async () => {
+  test("Reject login for missing password", async () => {
     req.body.password = null;
+
+    await loginController(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Invalid email or password",
+    });
+  });
+
+  test("Reject login for missing email", async () => {
+    req.body.email = null;
 
     await loginController(req, res);
     expect(res.status).toHaveBeenCalledWith(404);
@@ -299,7 +352,6 @@ describe("Update Profile Controller Tests", () => {
       json: jest.fn(),
     };
   });
-
   test("Password of length < 6", async () => {
     req.body.password = "12345";
     userModel.findById = jest.fn().mockResolvedValue(null);
@@ -308,6 +360,15 @@ describe("Update Profile Controller Tests", () => {
     expect(res.json).toHaveBeenCalledWith({ error: "Passsword is required and is at least 6 characters long" });
   });
 
+  test("Null password should be rejected", async () => {
+    req.body.password = "";
+    userModel.findById = jest.fn().mockResolvedValue(null);
+
+    await updateProfileController(req, res);
+    expect(res.json).toHaveBeenCalledWith({ error: "Passsword is required and is at least 6 characters long" });
+  });
+
+
   test("Error Accessing Database", async () => {
     userModel.findById = jest.fn().mockRejectedValue(new Error("Database Error"));
 
@@ -315,7 +376,17 @@ describe("Update Profile Controller Tests", () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  test("Successful Update", async () => {
+  test("Succesful Update with no new details", async () => {
+    req.body.name = null;
+    req.body.address = null;
+    req.body.phone = null;
+    userModel.findById = jest.fn().mockResolvedValue({user: {name: "test", phone: "12345", "address": "nus drive"}});
+    hashPassword.mockResolvedValue(null);
+    await updateProfileController(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  })
+
+  test("Successful Update with all new data", async () => {
     userModel.findById = jest.fn().mockResolvedValue(null);
     hashPassword.mockResolvedValue("123456");
     userModel.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
@@ -323,9 +394,6 @@ describe("Update Profile Controller Tests", () => {
     await updateProfileController(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
   });
-  /**
-   * TODO: ADD MORE FOR DIFFERENT COMBINATIONS OF INPUT
-   */
 });
 
 describe("Get Orders Controller Tests", () => {
@@ -352,7 +420,6 @@ describe("Get Orders Controller Tests", () => {
     expect(res.json).toHaveBeenCalled();
   });
 
-  // LOOK INTO THESE TEST CASES AGAIN
   test("Error during database retrieval", async () => {  
     orderModel.find = jest.fn().mockImplementation(() => {
       throw new Error("Database Error");
@@ -372,10 +439,6 @@ describe("Get Orders Controller Tests", () => {
     await getOrdersController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
   });
-
-  /**
-   * CHECK IF WE NEED TO CHECK IF THE DATA IS POPULATED CORRECTLY!
-   */
 });
 
 describe("Get All Orders Controller Test", () => {
