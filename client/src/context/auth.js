@@ -15,12 +15,19 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const data = localStorage.getItem("auth");
         if (data) {
-            const parseData = JSON.parse(data);
-            setAuth({
-                ...auth,
-                user: parseData.user,
-                token: parseData.token,
-            })
+            try {
+                const parseData = JSON.parse(data);
+
+                if (typeof parseData !== "object") throw new Error("Auth is not an object");
+
+                setAuth({
+                    ...auth,
+                    user: parseData.user,
+                    token: parseData.token,
+                });
+            } catch (error) {
+                console.log(error);
+            }
         }
     }, []);
 

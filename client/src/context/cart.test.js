@@ -49,5 +49,50 @@ describe("Cart Context", () => {
 			// Cleanup
 			localStorage.removeItem("cart");
 		});
+
+		it("Should not return cart if not in localStorage", async () => {
+			const TestComponent = () => {
+				const [cart] = useCart();
+				return <div>
+					<h1>Test</h1>
+					{cart?.map((item, index) => (
+						<div key={index} data-testid="id">{item.name}</div>
+					))}
+				</div>;
+			};
+
+			// Test
+			await act(async () => render(<CartProvider><TestComponent /></CartProvider>));
+			expect(screen.getByText("Test")).toBeInTheDocument();
+			expect(screen.queryByTestId("id")).toBeNull();
+		});
+
+		it("Should log to console if cart is not a valid JSON", async () => {
+			// Setup
+			console.log = jest.fn();
+			localStorage.setItem("cart", "invalidJSON");
+
+			// Test
+			await act(async () => render(<CartProvider><div>Test</div></CartProvider>));
+			expect(console.log).toHaveBeenCalledTimes(1);
+			localStorage.removeItem("cart");
+
+			// Cleanup
+			console.log.mockRestore();
+		});
+
+		it("Should log to console if cart is not an array", async () => {
+			// Setup
+			console.log = jest.fn();
+			localStorage.setItem("cart", JSON.stringify({ name: "Test" }));
+
+			// Test
+			await act(async () => render(<CartProvider><div>Test</div></CartProvider>));
+			expect(console.log).toHaveBeenCalledTimes(1);
+			localStorage.removeItem("cart");
+
+			// Cleanup
+			console.log.mockRestore();
+		});
 	});
 });

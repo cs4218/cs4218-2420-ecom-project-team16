@@ -94,12 +94,32 @@ describe("Header Nav Links", () => {
     const dashboardLink = screen.getAllByRole("link").filter(link => link.getAttribute("href").includes("/dashboard/user"));
     expect(dashboardLink).toHaveLength(1);
   });
+
+  it("Should href to /dashboard/user if role is not provided", () => {
+    // Setup
+    useAuth.mockReturnValue([{ user: {} }, jest.fn()]);
+
+    // Test
+    render(<MemoryRouter><Header/></MemoryRouter>);
+    const dashboardLink = screen.getAllByRole("link").filter(link => link.getAttribute("href").includes("/dashboard/user"));
+    expect(dashboardLink).toHaveLength(1);
+  });
+
+  it("Should not href to /dashboard/user if no user", () => {
+    // Setup
+    useAuth.mockReturnValue([{ user: null }, jest.fn()]);
+
+    // Test
+    render(<MemoryRouter><Header/></MemoryRouter>);
+    const dashboardLink = screen.getAllByRole("link").filter(link => link.getAttribute("href").includes("/dashboard/user"));
+    expect(dashboardLink).toHaveLength(0);
+  });
 });
 
 describe("Header Auth Links", () => {
   it("Should render the register and login links if no user", () => {
     // Setup
-    useAuth.mockReturnValue([{ user: null }, jest.fn()]);
+    useAuth.mockReturnValue([{}, jest.fn()]);
 
     // Test
     render(<MemoryRouter><Header/></MemoryRouter>);
