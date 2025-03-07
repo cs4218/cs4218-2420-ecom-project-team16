@@ -197,8 +197,8 @@ export const productFiltersController = async (req, res) => {
   try {
     const { checked, radio } = req.body;
     let args = {};
-    if (checked.length > 0) args.category = checked;
-    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+    if (checked.length > 0) args.category = { $in : checked };
+    if (radio.length === 2) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await productModel.find(args);
     res.status(200).send({
       success: true,
@@ -208,7 +208,7 @@ export const productFiltersController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       success: false,
-      message: "Error WHile Filtering Products",
+      message: "Error While Filtering Products",
       error,
     });
   }
@@ -236,7 +236,7 @@ export const productCountController = async (req, res) => {
 export const productListController = async (req, res) => {
   try {
     const perPage = 6;
-    const page = req.params.page ? req.params.page : 1;
+    const page = req.params.page ? Number(req.params.page) : 1;
     const products = await productModel
       .find({})
       .select("-photo")
@@ -280,8 +280,8 @@ export const searchProductController = async (req, res) => {
   }
 };
 
-// similar products
-export const realtedProductController = async (req, res) => {
+// similar product
+export const relatedProductController = async (req, res) => {
   try {
     const { pid, cid } = req.params;
     const products = await productModel
@@ -310,7 +310,9 @@ export const realtedProductController = async (req, res) => {
 export const productCategoryController = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
+    console.log(category)
     const products = await productModel.find({ category }).populate("category");
+    // console.log(products)
     res.status(200).send({
       success: true,
       category,
@@ -367,6 +369,7 @@ export const brainTreePaymentController = async (req, res) => {
           }).save();
           res.json({ ok: true });
         } else {
+          console.log(error);
           res.status(500).send(error);
         }
       }

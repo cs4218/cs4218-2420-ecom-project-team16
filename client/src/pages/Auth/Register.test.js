@@ -21,6 +21,7 @@ jest.mock("../../context/cart", () => ({
 jest.mock("../../context/search", () => ({
   useSearch: jest.fn(() => [{ keyword: "" }, jest.fn()]), // Mock useSearch hook to return null state and a mock function
 }));
+<<<<<<< HEAD
 jest.mock("../../hooks/useCategory", () => jest.fn(() => []));
 
 Object.defineProperty(window, "localStorage", {
@@ -42,6 +43,31 @@ window.matchMedia =
     };
   };
 
+=======
+
+jest.mock("../../hooks/useCategory", () => jest.fn(() => []));
+
+// Object.defineProperty(window, "localStorage", {
+//   value: {
+//     setItem: jest.fn(),
+//     getItem: jest.fn(),
+//     removeItem: jest.fn(),
+//   },
+//   writable: true,
+// });
+
+// // prevent jest from crashing
+// window.matchMedia =
+//   window.matchMedia ||
+//   function () {
+//     return {
+//       matches: false,
+//       addListener: function () {},
+//       removeListener: function () {},
+//     };
+//   };
+
+>>>>>>> staging
 describe("Register Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
