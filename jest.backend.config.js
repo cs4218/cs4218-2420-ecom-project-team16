@@ -7,7 +7,10 @@ export default {
 
   // which test to run
   testMatch: ["<rootDir>/controllers/*.test.js",
-    "<rootDir>/models/*.test.js"
+    "<rootDir>/helpers/*.test.js",
+    "<rootDir>/middlewares/*.test.js",
+    "<rootDir>/models/*.test.js",
+    "<rootDir>/config/*.test.js"
   ],
 
   // jest code coverage
