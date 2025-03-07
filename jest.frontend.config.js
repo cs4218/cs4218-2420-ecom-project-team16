@@ -25,7 +25,8 @@ export default {
   "<rootDir>/client/src/pages/user/*.test.js", 
   "<rootDir>/client/src/pages/admin/*.test.js",
   "<rootDir>/client/src/components/*.test.js",
-  "<rootDir>/client/src/components/Routes/*.test.js",],
+  "<rootDir>/client/src/components/Routes/*.test.js",
+  "<rootDir>/client/src/pages/ProductDetails.test.js"],
 
   // jest code coverage
   collectCoverage: true,
@@ -35,7 +36,10 @@ export default {
   "client/src/components/AdminMenu.js",
   "client/src/components/Routes/Private.js",
   "client/src/pages/admin/AdminDashboard.js",
-  "client/src/pages/admin/AdminOrders.js"],
+  "client/src/pages/admin/AdminOrders.js",
+  "client/src/pages/admin/UpdateProduct.test.js", 
+  "client/src/pages/admin/Products.test.js", 
+  "client/src/pages/ProductDetails.test.js"],
   coverageThreshold: {
     global: {
       lines: 100,
