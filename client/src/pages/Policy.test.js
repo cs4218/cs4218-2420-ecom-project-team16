@@ -6,7 +6,7 @@ import Policy from "./Policy";
 jest.mock("../components/Layout", () => ({ title, children }) => <div data-testid="layout-test" data-title={title}>{children}</div>);
 
 describe("Policy Page", () => {
-  it("renders the Layout component with title", () => {
+  it("Should render the Layout component with title", () => {
     render(<Policy />);
     const layout = screen.getByTestId("layout-test");
     expect(layout).toBeInTheDocument();
