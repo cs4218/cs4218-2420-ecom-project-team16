@@ -1,14 +1,5 @@
 import { jest } from "@jest/globals";
-import {
-  forgotPasswordController,
-  getAllOrdersController,
-  getOrdersController,
-  loginController,
-  orderStatusController,
-  registerController,
-  testController,
-  updateProfileController,
-} from "./authController";
+import { forgotPasswordController, getAllOrdersController, getOrdersController, loginController, orderStatusController, registerController, testController, updateProfileController } from "./authController";
 import userModel from "../models/userModel";
 import { comparePassword, hashPassword } from "../helpers/authHelper";
 import JWT from "jsonwebtoken";
@@ -43,49 +34,47 @@ describe("Register Controller Test", () => {
     req.body.name = null;
     await registerController(req, res);
     expect(res.send).toHaveBeenCalledWith({ message: "Name is Required" });
-  });
+  })
 
   test("Missing email", async () => {
     req.body.email = null;
     await registerController(req, res);
     expect(res.send).toHaveBeenCalledWith({ message: "Email is Required" });
-  });
+  })
+
 
   test("Missing password", async () => {
     req.body.password = null;
     await registerController(req, res);
-    expect(res.send).toHaveBeenCalledWith({
-      message: "Password is Required and of at least 6 characters",
-    });
-  });
+    expect(res.send).toHaveBeenCalledWith({ message: "Password is Required and of at least 6 characters" });
+  })
 
   test("Password.length < 6", async () => {
     req.body.password = "1234";
     await registerController(req, res);
-    expect(res.send).toHaveBeenCalledWith({
-      message: "Password is Required and of at least 6 characters",
-    });
-  });
+    expect(res.send).toHaveBeenCalledWith({ message: "Password is Required and of at least 6 characters" });
+  })
 
   test("Missing phone", async () => {
     req.body.phone = null;
     await registerController(req, res);
     expect(res.send).toHaveBeenCalledWith({ message: "Phone no is Required" });
-  });
+  })
 
   test("Missing Address", async () => {
     req.body.address = null;
     await registerController(req, res);
     expect(res.send).toHaveBeenCalledWith({ message: "Address is Required" });
-  });
+  })
 
   test("Missing Answer", async () => {
     req.body.answer = null;
     await registerController(req, res);
     expect(res.send).toHaveBeenCalledWith({ message: "Answer is Required" });
-  });
+  })
 
   test("user model is not saved for invalid email", async () => {
+
     // specify mock functionality
     userModel.findOne = jest.fn().mockResolvedValue(null);
     userModel.prototype.save = jest.fn();
@@ -122,23 +111,19 @@ describe("Register Controller Test", () => {
     req.body.email = "test@gmail.com";
 
     // Specify mock functionality
-    userModel.findOne = jest
-      .fn()
-      .mockRejectedValue(new Error("Error retrieving from Database"));
+    userModel.findOne = jest.fn().mockRejectedValue(new Error("Error retrieving from Database"));
     userModel.prototype.save = jest.fn();
 
     await registerController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
-  });
+  })
 
   test("Error thrown when saving to userModel", async () => {
     req.body.email = "test@gmail.com";
 
     // Specify mock functionality
     userModel.findOne = jest.fn().mockResolvedValue(null);
-    userModel.prototype.save = jest
-      .fn()
-      .mockRejectedValue(new Error("Error in saving to userModel"));
+    userModel.prototype.save = jest.fn().mockRejectedValue(new Error("Error in saving to userModel"));
 
     await registerController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
@@ -154,7 +139,7 @@ describe("Login Controller Tests", () => {
       body: {
         email: "Test@gmail.com",
         password: "12345678",
-      },
+      }
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -185,42 +170,37 @@ describe("Login Controller Tests", () => {
   });
 
   test("Reject login for user not found", async () => {
+
     userModel.findOne = jest.fn().mockResolvedValue(null);
 
     await loginController(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Email is not registerd",
+        success: false,
+        message: "Email is not registerd",
     });
   });
 
   test("Reject login for incorrect password", async () => {
-    userModel.findOne = jest
-      .fn()
-      .mockResolvedValue({
-        _id: 1,
-        password: "12345678",
-        name: "Jane Doe",
-        email: "Test@gmail.com",
-        phone: 88888888,
-        address: "123 Football drive",
-        role: "Player",
+      userModel.findOne = jest.fn().mockResolvedValue({_id: 1,
+                                                      password: "12345678",
+                                                      name: "Jane Doe",
+                                                      email: "Test@gmail.com",
+                                                      phone: 88888888,
+                                                      address: "123 Football drive",
+                                                      role: "Player",});
+      comparePassword.mockResolvedValue(false);
+      await loginController(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Invalid Password",
       });
-    comparePassword.mockResolvedValue(false);
-    await loginController(req, res);
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Invalid Password",
-    });
   });
 
   test("Error thrown when accessing database", async () => {
-    userModel.findOne = jest
-      .fn()
-      .mockRejectedValue(new Error("Database error"));
+    userModel.findOne = jest.fn().mockRejectedValue(new Error("Database error"));
     userModel.prototype.save = jest.fn();
 
     await loginController(req, res);
@@ -228,36 +208,33 @@ describe("Login Controller Tests", () => {
   });
 
   test("Successful Login", async () => {
-    userModel.findOne = jest
-      .fn()
-      .mockResolvedValue({
-        _id: 1,
-        password: "12345678",
-        name: "Jane Doe",
-        email: "Test@gmail.com",
-        phone: 88888888,
-        address: "123 Football drive",
-        role: "Player",
-      });
+    userModel.findOne = jest.fn().mockResolvedValue({_id: 1,
+      password: "12345678",
+      name: "Jane Doe",
+      email: "Test@gmail.com",
+      phone: 88888888,
+      address: "123 Football drive",
+      role: "Player",});
     comparePassword.mockResolvedValue(true);
 
     JWT.sign = jest.fn().mockResolvedValue("");
 
     await loginController(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith({
-      success: true,
-      message: "login successfully",
-      user: {
-        _id: 1,
-        name: "Jane Doe",
-        email: "Test@gmail.com",
-        phone: 88888888,
-        address: "123 Football drive",
-        role: "Player",
-      },
-      token: "",
-    });
+    expect(res.send).toHaveBeenCalledWith(
+      {
+        success: true,
+        message: "login successfully",
+        user: {
+          _id: 1,
+          name: "Jane Doe",
+          email: "Test@gmail.com",
+          phone: 88888888,
+          address: "123 Football drive",
+          role: "Player",
+        },
+        token: "",
+      });
   });
 });
 
@@ -271,7 +248,7 @@ describe("Forget Password Controller Tests", () => {
         email: "Test@gmail.com",
         answer: "12345678",
         newPassword: "12345678",
-      },
+      }
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -307,17 +284,13 @@ describe("Forget Password Controller Tests", () => {
   });
 
   test("Error when accessing Database", async () => {
-    userModel.findOne = jest
-      .fn()
-      .mockRejectedValue(new Error("Database error"));
+    userModel.findOne = jest.fn().mockRejectedValue(new Error("Database error"));
     await forgotPasswordController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
   });
 
   test("Successfully Change of Password", async () => {
-    userModel.findOne = jest
-      .fn()
-      .mockResolvedValue({ email: "Test@gmail.com", _id: 1 });
+    userModel.findOne = jest.fn().mockResolvedValue({email: "Test@gmail.com", _id: 1});
     hashPassword.mockResolvedValue("password");
     userModel.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
 
@@ -334,7 +307,7 @@ describe("Test Controller Tests", () => {
     req = {
       body: {
         email: "Test@gmail.com",
-      },
+      }
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -348,9 +321,10 @@ describe("Test Controller Tests", () => {
   });
 
   test("Error Thrown for test Controller", () => {
-    res.send.mockImplementationOnce(() => {
-      throw new Error("Error Thrown");
-    });
+    res.send
+      .mockImplementationOnce(() => {
+        throw new Error("Error Thrown");
+      });
     testController(req, res);
     expect(res.send).toHaveBeenCalledTimes(2);
   });
@@ -369,8 +343,8 @@ describe("Update Profile Controller Tests", () => {
         phone: 88888888,
       },
       user: {
-        _id: 1,
-      },
+        _id: 1
+      }
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -383,9 +357,7 @@ describe("Update Profile Controller Tests", () => {
     userModel.findById = jest.fn().mockResolvedValue(null);
 
     await updateProfileController(req, res);
-    expect(res.json).toHaveBeenCalledWith({
-      error: "Passsword is required and is at least 6 characters long",
-    });
+    expect(res.json).toHaveBeenCalledWith({ error: "Passsword is required and is at least 6 characters long" });
   });
 
   test("Null password should be rejected", async () => {
@@ -393,15 +365,12 @@ describe("Update Profile Controller Tests", () => {
     userModel.findById = jest.fn().mockResolvedValue(null);
 
     await updateProfileController(req, res);
-    expect(res.json).toHaveBeenCalledWith({
-      error: "Passsword is required and is at least 6 characters long",
-    });
+    expect(res.json).toHaveBeenCalledWith({ error: "Passsword is required and is at least 6 characters long" });
   });
 
+
   test("Error Accessing Database", async () => {
-    userModel.findById = jest
-      .fn()
-      .mockRejectedValue(new Error("Database Error"));
+    userModel.findById = jest.fn().mockRejectedValue(new Error("Database Error"));
 
     await updateProfileController(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
@@ -411,15 +380,11 @@ describe("Update Profile Controller Tests", () => {
     req.body.name = null;
     req.body.address = null;
     req.body.phone = null;
-    userModel.findById = jest
-      .fn()
-      .mockResolvedValue({
-        user: { name: "test", phone: "12345", address: "nus drive" },
-      });
+    userModel.findById = jest.fn().mockResolvedValue({user: {name: "test", phone: "12345", "address": "nus drive"}});
     hashPassword.mockResolvedValue(null);
     await updateProfileController(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
-  });
+  })
 
   test("Successful Update with all new data", async () => {
     userModel.findById = jest.fn().mockResolvedValue(null);
@@ -437,8 +402,8 @@ describe("Get Orders Controller Tests", () => {
     jest.clearAllMocks();
     req = {
       user: {
-        _id: 1,
-      },
+        _id: 1
+      }
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -455,7 +420,7 @@ describe("Get Orders Controller Tests", () => {
     expect(res.json).toHaveBeenCalled();
   });
 
-  test("Error during database retrieval", async () => {
+  test("Error during database retrieval", async () => {  
     orderModel.find = jest.fn().mockImplementation(() => {
       throw new Error("Database Error");
     });
@@ -496,12 +461,13 @@ describe("Get All Orders Controller Test", () => {
     expect(res.json).toHaveBeenCalled();
   });
 
-  test("Error during database retrieval", async () => {
+  test("Error during database retrieval", async () => {  
     orderModel.find = jest.fn().mockImplementation(() => {
       throw new Error("Database Error");
     });
     orderModel.populate = jest.fn().mockReturnThis();
     orderModel.sort = jest.fn().mockReturnThis();
+
 
     await getAllOrdersController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
@@ -514,10 +480,11 @@ describe("Get All Orders Controller Test", () => {
     });
     orderModel.sort = jest.fn().mockReturnThis();
 
+
     await getAllOrdersController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
   });
-
+  
   test("Error during population of extra data", async () => {
     orderModel.find = jest.fn().mockReturnThis();
     orderModel.populate = jest.fn().mockReturnThis();
@@ -536,11 +503,11 @@ describe("Order Status Controller Test", () => {
     jest.clearAllMocks();
     req = {
       params: {
-        orderId: 1,
+        orderId: 1
       },
       body: {
-        status: "true",
-      },
+        status: "true"
+      }
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -557,11 +524,9 @@ describe("Order Status Controller Test", () => {
   });
 
   test("Error during database Retrieval", async () => {
-    orderModel.findByIdAndUpdate = jest
-      .fn()
-      .mockRejectedValue(new Error("Database Error"));
+    orderModel.findByIdAndUpdate = jest.fn().mockRejectedValue(new Error("Database Error"));
 
     await orderStatusController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
-  });
-});
+  })
+})
