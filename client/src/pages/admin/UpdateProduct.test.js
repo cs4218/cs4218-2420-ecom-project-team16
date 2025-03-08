@@ -148,7 +148,7 @@ describe("UpdateProduct", () => {
         expect(axios.delete).toHaveBeenCalledWith(
             "/api/v1/product/delete-product/1"
         );
-        expect(toast.success).toHaveBeenCalledWith("Product Deleted Successfully");
+        expect(toast.success).toHaveBeenCalledWith("Product deleted successfully");
         expect(mockNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
         });
     })
@@ -207,7 +207,7 @@ describe("UpdateProduct", () => {
 
         await waitFor(() => {
             expect(console.log).toHaveBeenCalledWith(expect.any(Error)); // Check if error is logged
-            expect(toast.error).toHaveBeenCalledWith("Something wwent wrong in getting catgeory")
+            expect(toast.error).toHaveBeenCalledWith("Something went wrong in getting catgeory")
             expect(mockNavigate).not.toHaveBeenCalled()
         });
     })
