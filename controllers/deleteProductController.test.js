@@ -81,7 +81,7 @@ describe("Delete Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200)
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      message: "Product Deleted successfully",
+      message: "Product deleted successfully",
     })
   })
 
@@ -101,8 +101,8 @@ describe("Delete Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(500)
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
+      error: expect.any(Error),
       message: "Error while deleting product",
-      error: "Database Error"
     })
   })
 })
