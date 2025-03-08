@@ -1,8 +1,15 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
-
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
+
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 export const registerController = async (req, res) => {
   try {
@@ -15,7 +22,9 @@ export const registerController = async (req, res) => {
       return res.send({ message: "Email is Required" });
     }
     if (!password || password?.length < 6) {
-      return res.send({ message: "Password is Required and of at least 6 characters" });
+      return res.send({
+        message: "Password is Required and of at least 6 characters",
+      });
     }
     if (!phone) {
       return res.send({ message: "Phone no is Required" });
@@ -26,11 +35,11 @@ export const registerController = async (req, res) => {
     if (!answer) {
       return res.send({ message: "Answer is Required" });
     }
-    // Ensure that email must have @ symbol
-    if (!email.includes("@")) {
-      return res.send({ message: "Invalid Email"});
+    //check valid email
+    const validEmail = validateEmail(email);
+    if (!validEmail) {
+      return res.send({ message: "Invalid email address" });
     }
-
     //check user
     const existingUser = await userModel.findOne({ email });
     //existing user
@@ -175,7 +184,9 @@ export const updateProfileController = async (req, res) => {
     const { name, email, password, address, phone } = req.body;
     const user = await userModel.findById(req.user._id);
     if (password?.length < 6) {
-      return res.json({ error: "Passsword is required and is at least 6 characters long" });
+      return res.json({
+        error: "Passsword is required and is at least 6 characters long",
+      });
     }
     const hashedPassword = password ? await hashPassword(password) : undefined;
     const updatedUser = await userModel.findByIdAndUpdate(

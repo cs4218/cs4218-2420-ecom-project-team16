@@ -7,6 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 _markbind/logs/
 
+# coverage
+/coverage
+
 # Dependency directories
 node_modules/
 
