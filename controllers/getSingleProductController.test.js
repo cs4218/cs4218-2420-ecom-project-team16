@@ -109,7 +109,7 @@ describe("Get Single Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      message: "Single Product Fetched",
+      message: "Single product fetched",
       product: mockProducts
     });
   })
@@ -128,7 +128,7 @@ describe("Get Single Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      message: "Single Product Fetched",
+      message: "Single product fetched",
       product: mockProducts
     });
   })
@@ -147,7 +147,7 @@ describe("Get Single Product Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       message: "Error while getting single product",
-      error: "Database error"
+      error: dbError
     });
   })
 })
