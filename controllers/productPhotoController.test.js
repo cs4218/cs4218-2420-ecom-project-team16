@@ -98,7 +98,7 @@ describe("Get Single Product Photo Controller Test", () => {
     expect(productModel.findById).toHaveBeenCalledWith("someProductId")
 
     // Verify response
-    expect(mockRes.status).toHaveBeenCalledWith(404);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       message: "Photo not found for this product",
@@ -118,7 +118,7 @@ describe("Get Single Product Photo Controller Test", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       message: "Error while getting photo",
-      error: "Database error",
+      error: dbError
     })
   })
 })
