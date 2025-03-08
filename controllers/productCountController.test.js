@@ -90,8 +90,8 @@ describe("Product Count Controller Test", () => {
       expect(console.log).toHaveBeenCalledWith(expect.any(Error));
       expect(mockRes.status).toHaveBeenCalledWith(400)
       expect(mockRes.send).toHaveBeenCalledWith({
-        message: "Error in product count",
-        error: "Database Error",
+        message: "Error in getting product count",
+        error: dbError,
         success: false,
       })
     })
