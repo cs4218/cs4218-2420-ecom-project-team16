@@ -87,7 +87,7 @@ describe("Create Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      message: "Product Created Successfully",
+      message: "Product created successfully",
       products: expect.any(Object),
     });
   })
@@ -109,7 +109,7 @@ describe("Create Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      message: "Product Created Successfully",
+      message: "Product created successfully",
       products: mockProduct,
     });
   });
@@ -122,7 +122,7 @@ describe("Create Product Controller Test", () => {
     // Verify error response
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
-      error: "photo is Required and should be less then 1mb"
+      error: "Photo is required and should be less then 1mb"
     });
 
     // Verify no product was created
@@ -135,7 +135,7 @@ describe("Create Product Controller Test", () => {
     await createProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Name is Required"
+      error: "Name is required"
     });
   });
 
@@ -144,7 +144,7 @@ describe("Create Product Controller Test", () => {
     await createProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Description is Required"
+      error: "Description is required"
     });
   });
 
@@ -153,7 +153,7 @@ describe("Create Product Controller Test", () => {
     await createProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Price is Required"
+      error: "Price is required"
     });
   });
 
@@ -171,7 +171,7 @@ describe("Create Product Controller Test", () => {
     await createProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Category is Required"
+      error: "Category is required"
     });
   });
 
@@ -180,7 +180,7 @@ describe("Create Product Controller Test", () => {
     await createProductController(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Quantity is Required"
+      error: "Quantity is required"
     });
   });
 
