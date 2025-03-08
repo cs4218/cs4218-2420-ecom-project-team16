@@ -106,6 +106,23 @@ describe("ProductDetails", () => {
         });
     })
 
+    test("handles API error in getting related products", async () => {
+        axios.get.mockResolvedValueOnce({ data: mockProduct })
+        axios.get.mockRejectedValue(new Error("Database error"));
+
+        jest.spyOn(console, 'log').mockImplementation(() => {})
+
+        render(
+            <MemoryRouter>
+                <ProductDetails/>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(console.log).toHaveBeenCalledWith(expect.any(Error)); // Check if error is logged
+        });
+    })
+
     test("navigates when clicking on related product details", async () => {
         axios.get.mockResolvedValueOnce({ data: mockProduct })
         axios.get.mockResolvedValueOnce({ data: mockRelatedProducts });
