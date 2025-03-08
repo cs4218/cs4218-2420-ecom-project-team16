@@ -133,8 +133,8 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      counTotal: mockProducts.length,
-      message: "AllProducts ",
+      countTotal: mockProducts.length,
+      message: "All products",
       products: mockProducts
     });
   })
@@ -159,8 +159,8 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      counTotal: mockProducts.length,
-      message: "AllProducts ",
+      countTotal: mockProducts.length,
+      message: "All products",
       products: mockProducts
     });
   })
@@ -181,8 +181,8 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      counTotal: 0,
-      message: "AllProducts ",
+      countTotal: 0,
+      message: "All products",
       products: []
     });
   })
@@ -202,8 +202,8 @@ describe("Get Product Controller Test", () => {
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Erorr in getting products",
-      error: "Database error"
+      message: "Error in getting products",
+      error: expect.any(Error),
     });
   })
 })
