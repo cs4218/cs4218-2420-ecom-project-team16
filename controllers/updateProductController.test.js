@@ -76,7 +76,7 @@ describe("Update Product Controller Test", () => {
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.send).toHaveBeenCalledWith({
         success: true,
-        message: 'Product Updated Successfully',
+        message: 'Product updated successfully',
         products: expect.any(Object),
       });
     });
@@ -98,7 +98,7 @@ describe("Update Product Controller Test", () => {
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.send).toHaveBeenCalledWith({
         success: true,
-        message: "Product Updated Successfully",
+        message: "Product updated successfully",
         products: mockProduct,
       });
     });
@@ -110,7 +110,7 @@ describe("Update Product Controller Test", () => {
   
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.send).toHaveBeenCalledWith({
-        error: "photo is Required and should be less then 1mb"
+        error: "Photo is required and should be less then 1mb"
       });
       
       // Verify no database operations were attempted
@@ -139,7 +139,7 @@ describe("Update Product Controller Test", () => {
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.send).toHaveBeenCalledWith({
         success: true,
-        message: "Product Updated Successfully",
+        message: "Product updated successfully",
         products: mockProduct,
       });
     });
@@ -149,7 +149,7 @@ describe("Update Product Controller Test", () => {
       await updateProductController(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.send).toHaveBeenCalledWith({
-        error: "Name is Required"
+        error: "Name is required"
       });
     });
   
@@ -158,7 +158,7 @@ describe("Update Product Controller Test", () => {
       await updateProductController(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.send).toHaveBeenCalledWith({
-        error: "Description is Required"
+        error: "Description is required"
       });
     });
   
@@ -167,7 +167,7 @@ describe("Update Product Controller Test", () => {
       await updateProductController(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.send).toHaveBeenCalledWith({
-        error: "Price is Required"
+        error: "Price is required"
       });
     });
   
@@ -185,7 +185,7 @@ describe("Update Product Controller Test", () => {
       await updateProductController(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.send).toHaveBeenCalledWith({
-        error: "Category is Required"
+        error: "Category is required"
       });
     });
   
@@ -194,7 +194,7 @@ describe("Update Product Controller Test", () => {
       await updateProductController(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.send).toHaveBeenCalledWith({
-        error: "Quantity is Required"
+        error: "Quantity is required"
       });
     });
   
