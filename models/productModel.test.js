@@ -1,14 +1,23 @@
 import productModel from "./productModel";
+import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 
-dotenv.config();
+let mongoServer;
 
 describe("Test productModel", () => {
   let productData;
-  beforeEach(async () => {
-    await mongoose.connect(process.env.MONGO_URL);
+  beforeAll(async () => {
+      mongoServer = await MongoMemoryServer.create();
+      const mongoUri = mongoServer.getUri();
+      await mongoose.connect(mongoUri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+      });
+  });
 
+  
+  beforeEach(async () => {
+    
     productData = {
       slug: "slug",
       description: "description",
@@ -17,9 +26,15 @@ describe("Test productModel", () => {
       quantity: 1,
     };
   });
-
+  
   afterEach(async () => {
-    await mongoose.connection.close();
+      await productModel.deleteMany({});
+  });
+  
+  afterAll(async () => {
+      await mongoose.connection.dropDatabase();
+      await mongoose.connection.close();
+      await mongoServer.stop();
   });
 
   test("Save correctly", async () => {
