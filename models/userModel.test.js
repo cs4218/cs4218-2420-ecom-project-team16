@@ -1,15 +1,24 @@
 import mongoose from "mongoose";
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import userModel from "./userModel";
 import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
+
+let mongoServer;
 
 describe("User Model ", () => {
     beforeAll(async () => {
-        await mongoose.connect(process.env.MONGO_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        // await mongoose.connect(process.env.MONGO_URL, {
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true,
+        // });
+        mongoServer = await MongoMemoryServer.create();
+        const mongoUri = mongoServer.getUri();
+        await mongoose.connect(mongoUri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
     });
 
     afterEach(async () => {
@@ -17,7 +26,9 @@ describe("User Model ", () => {
     });
 
     afterAll(async () => {
+        await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
+        await mongoServer.stop();
     });
 
     const validUserData = {
