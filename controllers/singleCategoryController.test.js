@@ -41,7 +41,7 @@ describe("Test Single Category Controller", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       error: error,
-      message: "Error while getting single category",
+      message: "Error while getting single Category",
     });
   });
 });
