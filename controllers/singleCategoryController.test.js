@@ -15,7 +15,7 @@ describe("Test Single Category Controller", () => {
     };
   });
 
-  test.failing("sucessfully retrieve single categories", async () => {
+  test("sucessfully retrieve single categories", async () => {
     req = { params: { slug: "Mock Slug" } };
     categoryModel.findOne = jest
       .fn()
@@ -29,7 +29,7 @@ describe("Test Single Category Controller", () => {
       category: "Mock retrieved category",
     });
   });
-  test.failing("error code 500 returned when error thrown", async () => {
+  test("error code 500 returned when error thrown", async () => {
     const error = new Error("Database Error");
     req = { params: { slug: "Mock Slug" } };
     categoryModel.findOne = jest.fn().mockRejectedValueOnce(error);
