@@ -29,7 +29,7 @@ export default {
   // "<rootDir>/client/src/components/*.test.js",
   // "<rootDir>/client/src/components/Routes/*.test.js",
   // "<rootDir>/client/src/pages/ProductDetails.test.js",
-  "<rootDir>/client/src/pages/*.test.js"],
+  "<rootDir>/client/src/pages/Auth/*.test.js"],
 
   // jest code coverage
   collectCoverage: true,
