@@ -1,35 +1,62 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/dashboard/admin/products');
+test.describe("Products Page", () => {
+  test.beforeEach(async ({ page }) => {
+    // Intercept the API request and mock product data
+    await page.route("/api/v1/product/get-product", async (route) => {
+      await route.fulfill({
+        status: 200,
+        body: JSON.stringify({
+          products: [
+            {
+              _id: "1",
+              name: "Product A",
+              description: "Description of Product A",
+              slug: "product-a",
+            },
+            {
+              _id: "2",
+              name: "Product B",
+              description: "Description of Product B",
+              slug: "product-b",
+            },
+          ],
+        }),
+      });
+    });
+
+    // Go to the Products page
+    await page.goto("/dashboard/admin/products");
+  });
+
+  test("should display all products", async ({ page }) => {
+    // Check if the product cards are displayed
+    await expect(page.locator(".card-title")).toHaveCount(2);
+    await expect(page.locator(".card-title").nth(0)).toHaveText("Product A");
+    await expect(page.locator(".card-title").nth(1)).toHaveText("Product B");
+  });
+
+  test("should navigate to product details page when a product is clicked", async ({ page }) => {
+    // Click on "Product A"
+    await page.locator(".product-link").nth(0).click();
+    // Expect navigation to happen
+    await expect(page).toHaveURL(/.*dashboard\/admin\/product\/product-a/);
+  });
+
+  test("should show error toast on API failure", async ({ page }) => {
+    // Simulate API failure
+    await page.route("/api/v1/product/get-product", async (route) => {
+      await route.fulfill({
+        status: 500,
+        body: { message: "Internal Server Error" },
+      });
+    });
+
+    // Reload the page to trigger API call again
+    await page.reload();
+
+    // Expect toast error message to be visible
+    await expect(page.locator("text=Something Went Wrong")).toBeVisible();
+  });
 });
 
-test('has title', async ({ page }) => {
-  await expect(page.getByText('All Products List')).toBeVisible();
-})
-
-test('product card should be visible', async ({ page }) => {
-  const card = page.locator('.card')
-  await expect(card.first()).toBeVisible()
-})
-
-test('product title should be visible', async ({ page }) => {
-  await expect(page.locator('h5.card-title').first()).toBeVisible();
-})
-
-test('product description should be visible', async ({ page }) => {
-  await expect(page.locator('h5.card-text').first()).toBeVisible();
-})
-
-test('product should be clickable', async ({ page }) => {
-  await page.locator('.card').first().click();
-  await expect(page.getByRole('heading', { name: 'Update Product' })).toBeVisible();
-});
-
-test('product clicked on should match the one redirected to', async ({ page }) => {
-  const card = page.locator('.card').first();
-  const expectedTitle = await card.locator('h5.card-title').textContent();
-
-  await card.click()
-  await expect(page.getByRole('textbox', { name: 'write a name' })).toHaveValue(expectedTitle)
-})
