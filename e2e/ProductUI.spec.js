@@ -36,6 +36,11 @@ test.describe("Products Page", () => {
     await expect(page.locator(".card-title").nth(1)).toHaveText("Product B");
   });
 
+  test('should display product image correctly', async ({ page }) => {
+    const productImage = page.locator('img[alt="Product A"]');
+    await expect(productImage).toHaveAttribute('src', '/api/v1/product/product-photo/1');
+  });
+
   test("should navigate to product details page when a product is clicked", async ({ page }) => {
     // Click on "Product A"
     await page.locator(".product-link").nth(0).click();
