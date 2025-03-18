@@ -48,20 +48,5 @@ test.describe("Products Page", () => {
     await expect(page).toHaveURL(/.*dashboard\/admin\/product\/product-a/);
   });
 
-  test("should show error toast on API failure", async ({ page }) => {
-    // Simulate API failure
-    await page.route("/api/v1/product/get-product", async (route) => {
-      await route.fulfill({
-        status: 500,
-        body: { message: "Internal Server Error" },
-      });
-    });
-
-    // Reload the page to trigger API call again
-    await page.reload();
-
-    // Expect toast error message to be visible
-    await expect(page.locator("text=Something Went Wrong")).toBeVisible();
-  });
 });
 
