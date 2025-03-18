@@ -9,7 +9,7 @@ dotenv.config();
 
 let mockReq, mockRes, productToBeFound
 
-describe("Integration test for create product controller", () => {
+describe("Integration test for get single product controller", () => {
     beforeAll(async () => {
         await mongoose.connect(process.env.MONGO_URL);
     })
@@ -21,7 +21,6 @@ describe("Integration test for create product controller", () => {
     beforeEach(async () => {
         jest.clearAllMocks();
 
-
         productToBeFound = await productModel.create({
             name: "Product to be found",
             slug: slugify("Product to be found"),
@@ -30,7 +29,6 @@ describe("Integration test for create product controller", () => {
             category: new mongoose.Types.ObjectId(),
             quantity: 5,
         });
-
 
         mockReq = {
             params: { slug: slugify("Product to be found") },
