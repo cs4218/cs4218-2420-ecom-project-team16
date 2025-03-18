@@ -18,7 +18,6 @@ const fakeStorageItem = {
   }),
 };
 
-console.log(process.env.JWT_SECRET);
 test("Dashboard displays user information correctly", async ({ page }) => {
   await page.addInitScript((data) => {
     localStorage.setItem("auth", JSON.stringify(data));
