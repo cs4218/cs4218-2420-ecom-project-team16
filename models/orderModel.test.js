@@ -1,13 +1,21 @@
 import orderModel from "./orderModel"
 import mongoose from "mongoose"
-import dotenv from "dotenv"
+import { MongoMemoryServer } from "mongodb-memory-server";
 
-dotenv.config();
+let mongoServer;
 
 describe("Test OrderModel", () => {
+    beforeAll(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        const mongoUri = mongoServer.getUri();
+        await mongoose.connect(mongoUri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+    });
+
     let orderData
     beforeEach(async () => {
-        await mongoose.connect(process.env.MONGO_URL);
         orderData = {
             products: [new mongoose.Types.ObjectId()],
             payment: { method: "Credit Card", amount: 100 },
@@ -17,8 +25,15 @@ describe("Test OrderModel", () => {
     });
     
     afterEach(async () => {
-        await mongoose.connection.close()
-    })
+        await orderModel.deleteMany({});
+    });
+    
+
+    afterAll(async () => {
+        await mongoose.connection.dropDatabase();
+        await mongoose.connection.close();
+        await mongoServer.stop();
+    });
 
     test("Save works as intended", async () => {
         const order = new orderModel(orderData);

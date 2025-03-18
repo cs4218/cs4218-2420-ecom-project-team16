@@ -1,18 +1,33 @@
 import categoryModel from "./categoryModel";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
-dotenv.config();
+let mongoServer;
 
 describe("Test categoryModel", () => {
   let categoryData;
+
+  beforeAll(async () => {
+      mongoServer = await MongoMemoryServer.create();
+      const mongoUri = mongoServer.getUri();
+      await mongoose.connect(mongoUri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+      });
+  });
+
   beforeEach(async () => {
-    await mongoose.connect(process.env.MONGO_URL);
     categoryData = {};
   });
 
   afterEach(async () => {
-    await mongoose.connection.close();
+      await categoryModel.deleteMany({});
+  });
+
+  afterAll(async () => {
+      await mongoose.connection.dropDatabase();
+      await mongoose.connection.close();
+      await mongoServer.stop();
   });
 
   test("Save correctly", async () => {
