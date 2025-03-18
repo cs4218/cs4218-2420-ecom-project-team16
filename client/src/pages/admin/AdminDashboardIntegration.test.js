@@ -66,7 +66,7 @@ describe("Admin Dashboard Integration Test", () => {
             </AuthContext.Provider>
         );
 
-        expect(screen.getByText("Admin Name :" )).toBeInTheDocument();
+        expect(screen.getByText("Admin Name :")).toBeInTheDocument();
         expect(screen.getByText("Admin Email :")).toBeInTheDocument();
         expect(screen.getByText("Admin Contact :")).toBeInTheDocument();
     })
