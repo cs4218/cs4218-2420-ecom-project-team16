@@ -7,7 +7,7 @@ import slugify from "slugify";
 
 dotenv.config();
 
-let mockReq, mockRes, productToBeDeleted, backupProductData, deletedProductId
+let mockReq, mockRes, productToBeDeleted
 
 describe("Integration test for create product controller", () => {
     beforeAll(async () => {
@@ -21,33 +21,17 @@ describe("Integration test for create product controller", () => {
     beforeEach(async () => {
         jest.clearAllMocks();
 
-        productToBeDeleted = await productModel.findOne({ name: "Product to be deleted" })
-
-        if (!productToBeDeleted) {
-            productToBeDeleted = await productModel.create({
-                name: "Product to be deleted",
-                slug: slugify("Product to be deleted"),
-                description: "Description",
-                price: 50,
-                category: new mongoose.Types.ObjectId(),
-                quantity: 5,
-            });
-        }
-
-        deletedProductId = productToBeDeleted._id.toString();
-
-        // Backup the product data for recreation
-        backupProductData = {
-            name: productToBeDeleted.name,
-            slug: slugify(productToBeDeleted.name),
-            description: productToBeDeleted.description,
-            price: productToBeDeleted.price,
-            category: productToBeDeleted.category,
-            quantity: productToBeDeleted.quantity,
-        };
+        productToBeDeleted = await productModel.create({
+            name: "Product to be deleted",
+            slug: slugify("Product to be deleted"),
+            description: "Description",
+            price: 50,
+            category: new mongoose.Types.ObjectId(),
+            quantity: 5,
+        });
 
         mockReq = {
-            params: { pid: deletedProductId },
+            params: { pid: productToBeDeleted._id },
         }
         mockRes = {
             status: jest.fn().mockReturnThis(),
@@ -55,14 +39,14 @@ describe("Integration test for create product controller", () => {
             set: jest.fn()
         }
     })
-    
+
     afterEach(async () => {
-        const exists = await productModel.findById(deletedProductId);
-        if (!exists) {
-            await productModel.create({ ...backupProductData, _id: deletedProductId });
+        const deletedProduct = await productModel.findById(productToBeDeleted._id);
+        if (deletedProduct) {
+            await deletedProduct.deleteOne()
         }
     })
-
+    
     test('deletes a product successfully', async () => {
         await deleteProductController(mockReq, mockRes)
 
@@ -72,7 +56,7 @@ describe("Integration test for create product controller", () => {
             message: "Product deleted successfully",
         })
 
-        const deletedProduct = await productModel.findById(deletedProductId)
+        const deletedProduct = await productModel.findById(productToBeDeleted._id)
         expect(deletedProduct).toBeNull()
     })
 })
