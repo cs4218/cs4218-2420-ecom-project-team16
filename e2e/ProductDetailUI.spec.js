@@ -35,7 +35,7 @@ test.describe('Product Details Page', () => {
     });
 
     // Navigate to the Product Details page
-    await page.goto('http://localhost:3000/product/mock-product');
+    await page.goto('/product/mock-product');
   });
 
   test('should display product details correctly', async ({ page }) => {
@@ -84,9 +84,18 @@ test.describe('Product Details Page', () => {
   });
 
   test('should add product to cart when clicking "ADD TO CART"', async ({ page }) => {
-    const addToCartButton = page.locator('text=ADD TO CART');
-    await expect(addToCartButton).toBeVisible();
-    await addToCartButton.click();
-    // Fix the component for adding to cart
+    const addToCartButton = page.getByRole('button', { name: 'ADD TO CART' }).first()
+    await expect(addToCartButton).toBeVisible()
+
+    await addToCartButton.click()
+    await expect(page.getByText('Item Added to cart')).toBeVisible();
+  });
+
+  test('should add related product to cart when clicking "ADD TO CART"', async ({ page }) => {
+    const addToCartButton = page.getByRole('button', { name: 'ADD TO CART' }).nth(1)
+    await expect(addToCartButton).toBeVisible()
+
+    await addToCartButton.click()
+    await expect(page.getByText('Item Added to cart')).toBeVisible();
   });
 });
