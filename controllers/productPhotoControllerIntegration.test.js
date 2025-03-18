@@ -29,7 +29,6 @@ describe("Integration test for product photo controller", () => {
             quantity: 5,
         });
 
-        console.log(productToBeFound)
         mockReq = { params: { pid: productToBeFound._id }}
         mockRes = {
             status: jest.fn().mockReturnThis(),
