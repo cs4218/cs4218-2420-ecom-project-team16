@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, afterEach, describe, expect, jest, test } from "@jest/globals";
+import { afterAll, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { getProductController } from "./productController";
 import mongoose from "mongoose";
 import dotenv from "dotenv"
@@ -7,7 +7,7 @@ dotenv.config();
 
 let mockReq, mockRes
 
-describe("Integration test for create product controller", () => {
+describe("Integration test for get product controller", () => {
     beforeAll(async () => {
         await mongoose.connect(process.env.MONGO_URL);
     })
