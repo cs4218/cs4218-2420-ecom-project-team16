@@ -27,7 +27,7 @@ export const createCategoryController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Errro in Category",
+      message: "Error in Category",
     });
   }
 };

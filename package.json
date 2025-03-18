@@ -11,7 +11,7 @@
     "sonarqube": "sonar-scanner",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:frontend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js",
-    "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js"
+    "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js --detectOpenHandles"
   },
   "keywords": [],
   "author": "RP",
@@ -34,6 +34,7 @@
     "nodemon": "^3.0.3",
     "react-icons": "^5.0.1",
     "slugify": "^1.6.6",
+    "supertest": "^7.0.0",
     "text-encoder": "^0.0.4"
   },
   "devDependencies": {
