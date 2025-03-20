@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor, screen, fireEvent } from "@testing-library/react";
+import { render, waitFor, screen } from "@testing-library/react";
 import axios from "axios";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import "@testing-library/jest-dom/extend-expect";
@@ -7,31 +7,41 @@ import CreateProduct from "./CreateProduct";
 import { AuthProvider } from "../../context/auth";
 import { CartProvider } from "../../context/cart";
 import { SearchProvider } from "../../context/search";
+import dotenv from "dotenv";
 
-jest.mock("axios");
+dotenv.config();
+let authToken, mockAuth;
 
-describe("Create Product Component", () => {
-  beforeAll(() => {
-    global.matchMedia = jest.fn().mockImplementation((query) => ({
-      media: query,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-    }));
-  });
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-  const mockCategories = [
-    { _id: 1, name: "cat_1" },
-    { _id: 2, name: "cat_2" },
-    { _id: 3, name: "cat_3" },
-    { _id: 4, name: "cat_4" },
-  ];
-  it("Renders the create product with mocked products", async () => {
-    axios.get.mockResolvedValueOnce({
-      data: { success: true, category: mockCategories },
+beforeAll(async () => {
+  axios.defaults.baseURL = "http://localhost:6060";
+  try {
+    const loginResponse = await axios.post("/api/v1/auth/login", {
+      email: process.env.TEST_ADMIN_USER,
+      password: process.env.TEST_ADMIN_PASS,
     });
-
+    authToken = loginResponse.data.token;
+    axios.defaults.headers.common["Authorization"] = authToken;
+    console.log(axios.defaults.headers.common["Authorization"]);
+  } catch (error) {
+    console.error(
+      "Authentication failed:",
+      error.response?.data || error.message
+    );
+  }
+});
+// This test is to check FE-BE integration
+describe("Create Product page", () => {
+  it("should display the retrieved categories correctly", async () => {
+    mockAuth = {
+      user: {
+        email: "john@example.com",
+        name: "John Doe",
+        phone: "90123456",
+        address: "Test address",
+      },
+      token: 1,
+    };
+    localStorage.setItem("auth", JSON.stringify(mockAuth));
     render(
       <AuthProvider>
         <CartProvider>
@@ -49,61 +59,14 @@ describe("Create Product Component", () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalled();
-      //Admin Menu
-      expect(screen.getByText("Admin Panel")).toBeInTheDocument();
-      expect(screen.getByText("Create Category")).toBeInTheDocument();
-      //   expect(screen.getByText("Create Product")).toBeInTheDocument();
-      expect(screen.getByText("Products")).toBeInTheDocument();
-      expect(screen.getByText("Orders")).toBeInTheDocument();
-
-      // Other components
-      expect(screen.getByText("Upload Photo")).toBeInTheDocument();
-      expect(screen.getByText("Select Shipping")).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText("write a quantity")
-      ).toBeInTheDocument();
-      expect(screen.getByPlaceholderText("write a Price")).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText("write a description")
-      ).toBeInTheDocument();
-      expect(screen.getByPlaceholderText("write a name")).toBeInTheDocument();
-      expect(screen.getByText("Select a category")).toBeInTheDocument();
-      expect(screen.getByText("CREATE PRODUCT")).toBeInTheDocument();
-
-      //Layout Component
-      expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
-      expect(screen.getByText("About")).toBeInTheDocument();
-      expect(screen.getByText("Contact")).toBeInTheDocument();
-      expect(screen.getByText("Privacy Policy")).toBeInTheDocument();
-    });
-  });
-  it("toast error if retrieval results in error", async () => {
-    const error = new Error("Mocked Error");
-    await axios.get.mockRejectedValue(error);
-    render(
-      <AuthProvider>
-        <CartProvider>
-          <SearchProvider>
-            <MemoryRouter initialEntries={["/dashboard/admin/create-product"]}>
-              <Routes>
-                <Route
-                  path="/dashboard/admin/create-product"
-                  element={<CreateProduct />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </SearchProvider>
-        </CartProvider>
-      </AuthProvider>
+    await waitFor(
+      () => {
+        //retrieved elements are correct from backend
+        expect(screen.getByText("Electronics")).toBeInTheDocument();
+        expect(screen.getByText("Book")).toBeInTheDocument();
+        expect(screen.getByText("Clothing")).toBeInTheDocument();
+      },
+      { timeout: 10000 }
     );
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalled();
-      //toast integration
-      expect(
-        screen.getByText("Something went wrong in getting catgeory")
-      ).toBeInTheDocument();
-    });
   });
 });

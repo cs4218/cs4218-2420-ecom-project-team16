@@ -7,32 +7,41 @@ import CreateCategory from "./CreateCategory";
 import { AuthProvider } from "../../context/auth";
 import { CartProvider } from "../../context/cart";
 import { SearchProvider } from "../../context/search";
+import dotenv from "dotenv";
 
-// Mock axios
-jest.mock("axios");
+dotenv.config();
+let authToken, mockAuth;
 
+beforeAll(async () => {
+  axios.defaults.baseURL = "http://localhost:6060";
+  try {
+    const loginResponse = await axios.post("/api/v1/auth/login", {
+      email: process.env.TEST_ADMIN_USER,
+      password: process.env.TEST_ADMIN_PASS,
+    });
+    authToken = loginResponse.data.token;
+    axios.defaults.headers.common["Authorization"] = authToken;
+    console.log(axios.defaults.headers.common["Authorization"]);
+  } catch (error) {
+    console.error(
+      "Authentication failed:",
+      error.response?.data || error.message
+    );
+  }
+});
+// This test is to check FE-BE integration
 describe("Create Category Component", () => {
-  beforeAll(() => {
-    global.matchMedia = jest.fn().mockImplementation((query) => ({
-      media: query,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-    }));
-  });
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-  const mockCategories = [
-    { _id: 1, name: "cat_1" },
-    { _id: 2, name: "cat_2" },
-    { _id: 3, name: "cat_3" },
-    { _id: 4, name: "cat_4" },
-  ];
   it("should display all retrieved categories successfully", async () => {
-    await axios.get.mockResolvedValueOnce({
-      data: { success: true, category: mockCategories },
-    });
-
+    mockAuth = {
+      user: {
+        email: "john@example.com",
+        name: "John Doe",
+        phone: "90123456",
+        address: "Test address",
+      },
+      token: 1,
+    };
+    localStorage.setItem("auth", JSON.stringify(mockAuth));
     render(
       <AuthProvider>
         <CartProvider>
@@ -50,52 +59,20 @@ describe("Create Category Component", () => {
       </AuthProvider>
     );
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalled();
-      //Admin Menu
-      expect(screen.getByText("Admin Panel")).toBeInTheDocument();
-      expect(screen.getByText("Create Category")).toBeInTheDocument();
-      expect(screen.getByText("Create Product")).toBeInTheDocument();
-      expect(screen.getByText("Products")).toBeInTheDocument();
-      expect(screen.getByText("Orders")).toBeInTheDocument();
-      //Layout Component
-      expect(screen.getByText(/All Rights Reserved/)).toBeInTheDocument();
-      expect(screen.getByText("About")).toBeInTheDocument();
-      expect(screen.getByText("Contact")).toBeInTheDocument();
-      expect(screen.getByText("Privacy Policy")).toBeInTheDocument();
-
-      //remaining elements
-      expect(screen.getByText("cat_1")).toBeInTheDocument();
-      expect(screen.getByText("cat_2")).toBeInTheDocument();
-      expect(screen.getByText("cat_3")).toBeInTheDocument();
-      expect(screen.getByText("cat_4")).toBeInTheDocument();
-    });
-  });
-  it("toast error if retrieval results in error", async () => {
-    const error = new Error("Mocked Error");
-    await axios.get.mockRejectedValue(error);
-    render(
-      <AuthProvider>
-        <CartProvider>
-          <SearchProvider>
-            <MemoryRouter initialEntries={["/dashboard/admin/create-category"]}>
-              <Routes>
-                <Route
-                  path="/dashboard/admin/create-category"
-                  element={<CreateCategory />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </SearchProvider>
-        </CartProvider>
-      </AuthProvider>
+    await waitFor(
+      () => {
+        //retrieved elements are correct
+        expect(
+          screen.getByText("Electronics", { selector: "td" })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText("Book", { selector: "td" })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText("Clothing", { selector: "td" })
+        ).toBeInTheDocument();
+      },
+      { timeout: 10000 }
     );
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalled();
-      //toast integration
-      expect(
-        screen.getByText("Something went wrong in getting catgeory")
-      ).toBeInTheDocument();
-    });
   });
 });
