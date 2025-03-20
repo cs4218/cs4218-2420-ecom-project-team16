@@ -31,7 +31,7 @@ describe("Integration test for Create Category Controller", () => {
     await createCategoryController(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith({
-      success: true,
+      success: false,
       message: "Category Already Exists",
     });
   });
