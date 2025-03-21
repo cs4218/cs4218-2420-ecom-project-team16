@@ -6,6 +6,7 @@ import AdminDashboard from "./AdminDashboard";
 import { AuthContext } from "../../context/auth";
 import { CartProvider } from "../../context/cart";
 import { SearchProvider } from "../../context/search";
+import { AuthProvider } from "../../context/auth";
 
 const mockAuth = { user : {
     name : "John Doe",
@@ -17,8 +18,9 @@ const mockAuth = { user : {
 
 describe("Admin Dashboard Integration Test", () => {
     test("renders admin dashboard with related components", async() => {
+        localStorage.setItem('auth', JSON.stringify(mockAuth));
         render(
-            <AuthContext.Provider value={[mockAuth]}>
+            <AuthProvider>
                 <CartProvider>
                     <SearchProvider>
                         <MemoryRouter>
@@ -26,7 +28,7 @@ describe("Admin Dashboard Integration Test", () => {
                         </MemoryRouter>
                     </SearchProvider>
                 </CartProvider>
-            </AuthContext.Provider>
+            </AuthProvider>
         );
         
         // dashboard components
