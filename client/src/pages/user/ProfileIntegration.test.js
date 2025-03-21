@@ -2,7 +2,7 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Profile from "./Profile"; 
-import { AuthContext, AuthProvider } from "../../context/auth"; 
+import { AuthContext, AuthProvider, useAuth } from "../../context/auth"; 
 import axios from "axios";
 import { MemoryRouter } from "react-router-dom";
 import { CartProvider } from "../../context/cart";
@@ -11,7 +11,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 let authToken, mockAuth;
-
+// mocking this because Jest test environment doesn't have window.matchMedia by default and can cause test to fail
+jest.mock("react-hot-toast");
 beforeAll(async () => {
   axios.defaults.baseURL = 'http://localhost:6060';
   try {
@@ -21,9 +22,9 @@ beforeAll(async () => {
     });
     authToken = loginResponse.data.token;
     axios.defaults.headers.common['Authorization'] = authToken;
-    console.log("Profile Integration Test")
-    console.log(axios.defaults.headers.common['Authorization']);
-    console.log("Successfully authenticated with token");
+    // console.log("Profile Integration Test")
+    // console.log(axios.defaults.headers.common['Authorization']);
+    // console.log("Successfully authenticated with token");
   } catch (error) {
     console.error("Authentication failed:", error.response?.data || error.message);
   }
@@ -35,10 +36,11 @@ beforeAll(async () => {
         phone: "90123456", 
         address: "Test address"
     },
-    token : 1
+    token : authToken
   };  
+});
+
   
-})
 
 
   describe("Profile Integration Test", () => {
@@ -66,15 +68,14 @@ beforeAll(async () => {
 
 
       const updatedUser = {
-          email: "jane@example.com", 
-          name: "Jane Doe", 
-          password: process.env.TEST_NORMAL_PASS,
+          email: "admin@test.sg", 
+          name: "admin@test.sg", 
+          password: process.env.TEST_ADMIN_PASS,
           phone: "98765432", 
           address: "Modified test address"
       }
 
       localStorage.setItem('auth', JSON.stringify(mockAuth));
-      
 
       render(
         <AuthProvider>
@@ -106,6 +107,13 @@ beforeAll(async () => {
         expect(screen.getByPlaceholderText("Enter Your Phone")).toHaveValue(updatedUser.phone);
         expect(screen.getByPlaceholderText("Enter Your Address")).toHaveValue(updatedUser.address);
       },);
+      await waitFor(() => {
+        const storedAuth = JSON.parse(localStorage.getItem('auth'));
+        expect(storedAuth.user.name).toBe(updatedUser.name);
+        expect(storedAuth.user.phone).toBe(updatedUser.phone);
+        expect(storedAuth.user.address).toBe(updatedUser.address);
+
+      },{ timeout: 5000 })
   });
 }
   )
