@@ -42,7 +42,7 @@ beforeAll(async () => {
 describe("Users Integration Test", () => {
     test("Renders the Users page and show all users", async () => {
        
-        localStorage.setItem('auth', JSON.stringify(mockAuth));;
+        localStorage.setItem('auth', JSON.stringify(mockAuth));
 
         render(
             <AuthProvider>
