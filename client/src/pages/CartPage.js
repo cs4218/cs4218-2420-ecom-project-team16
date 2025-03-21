@@ -71,10 +71,15 @@ const CartPage = () => {
     try {
       setLoading(true);
       const { nonce } = await instance.requestPaymentMethod();
-      const { data } = await axios.post("/api/v1/product/braintree/payment", {
-        nonce,
-        cart,
-      });
+      const { data } = await axios.post("/api/v1/product/braintree/payment/",
+        { nonce, cart },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: auth?.token,
+          },
+        }
+      );
       setLoading(false);
       localStorage.removeItem("cart");
       setCart([]);
@@ -105,8 +110,8 @@ const CartPage = () => {
             </h1>
           </div>
         </div>
-        <div className="container ">
-          <div className="row ">
+        <div className="container">
+          <div className="row">
             <div className="col-md-7 p-0 m-0">
               {cart?.map((p) => (
                 <div className="row card flex-row" key={p._id}>
@@ -184,9 +189,6 @@ const CartPage = () => {
                     <DropIn
                       options={{
                         authorization: clientToken,
-                        paypal: {
-                          flow: "vault",
-                        },
                       }}
                       onInstance={setInstance}
                     />

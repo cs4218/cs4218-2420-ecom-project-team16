@@ -6,6 +6,7 @@ import fs from "fs";
 import slugify from "slugify";
 import braintree from "braintree";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -359,12 +360,16 @@ export const braintreeTokenController = async (req, res) => {
 //payment
 export const brainTreePaymentController = async (req, res) => {
   try {
+    console.log(req.body);
     const { nonce, cart } = req.body;
-    let total = 0;
-    cart.map((i) => {
-      total += i.price;
-    });
-    let newTransaction = gateway.transaction.sale(
+
+    if (!cart || !Array.isArray(cart)) {
+      return res.status(400).send({ error: "Cart is required" });
+    }
+
+    let total = cart.reduceRight((acc, item) => acc + (item.price || 0), 0);
+    
+    gateway.transaction.sale(
       {
         amount: total,
         paymentMethodNonce: nonce,
@@ -372,21 +377,29 @@ export const brainTreePaymentController = async (req, res) => {
           submitForSettlement: true,
         },
       },
-      function (error, result) {
-        if (result) {
-          const order = new orderModel({
-            products: cart,
-            payment: result,
-            buyer: req.user._id,
-          }).save();
-          res.json({ ok: true });
-        } else {
-          console.log(error);
-          res.status(500).send(error);
+      async (error, result) => {
+        if (error || !result || !result.success) {
+          console.log(error, result);
+          return res.status(500).send({ error });
         }
+
+        const productIds = cart.map((item) => item._id);
+
+        await orderModel.create({
+          products: productIds,
+          payment: result,
+          buyer: req.user._id,
+        });
+
+        res.json({ ok: true });
       }
     );
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while payment"
+    });
   }
 };
