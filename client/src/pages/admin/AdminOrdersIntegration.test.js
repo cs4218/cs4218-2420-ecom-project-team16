@@ -4,7 +4,7 @@ import axios from "axios";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AdminOrders from "./AdminOrders";
-import { AuthContext } from "../../context/auth";
+import { AuthContext, AuthProvider } from "../../context/auth";
 import { CartProvider } from "../../context/cart";
 import { SearchProvider } from "../../context/search";
 
@@ -23,9 +23,6 @@ beforeAll(async () => {
     
     authToken = loginResponse.data.token;
     axios.defaults.headers.common['Authorization'] = authToken;
-    console.log("AdminOrdersIntegrationTest: ")
-    console.log(axios.defaults.headers.common['Authorization']);
-    console.log("Successfully authenticated with token");
   } catch (error) {
     console.error("Authentication failed:", error.response?.data || error.message);
   }
