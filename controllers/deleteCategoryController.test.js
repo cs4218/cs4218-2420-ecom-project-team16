@@ -23,7 +23,7 @@ describe("Test Delete Category Controller", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "Categry Deleted Successfully",
+      message: "Category Deleted Successfully",
     });
   });
   test("error code 500 returned when error thrown", async () => {
