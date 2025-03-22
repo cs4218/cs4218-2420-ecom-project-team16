@@ -26,35 +26,37 @@ describe('Related Product Controller Integration Test', () => {
         const cid = new ObjectId('66db427fdb0119d9234b27ef');
         const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
         expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            success: true,
-            products: expect.arrayContaining([
-              expect.not.objectContaining({ 
-                name: 'Laptop', 
-                price: 1499.99, 
-              }),
-              expect.not.objectContaining({ 
-                name: 'Textbook', 
-                price: 79.99, 
-              }),
-              expect.not.objectContaining({ 
-                name: 'Smartphone', 
-                price: 999.99, 
-              }),
-              expect.objectContaining({ 
-                name: 'The Law of Contract in Singapore', 
-                price: 54.99, 
-              }),
-              expect.objectContaining({ 
-                name: 'Novel', 
-                price: 14.99, 
-              }),
-              expect.not.objectContaining({ 
-                name: 'NUS T-shirt', 
-                price: 4.99, 
-              }),
-            ])
-          }); 
+        expect(response.body.success).toBe(true);
+        const expectedProducts = [
+          expect.objectContaining({ 
+            name: 'The Law of Contract in Singapore', 
+            price: 54.99, 
+          }),
+          expect.objectContaining({ 
+            name: 'Novel', 
+            price: 14.99, 
+          }),
+        ]
+        const excludedProducts = [
+          expect.objectContaining({ 
+            name: 'Smartphone', 
+            price: 999.99, 
+          }),
+          expect.objectContaining({ 
+            name: 'Textbook', 
+            price: 79.99, 
+          }),
+          expect.objectContaining({ 
+            name: 'Laptop', 
+            price: 1499.99, 
+          }),
+          expect.objectContaining({ 
+            name: 'NUS T-shirt', 
+            price: 4.99, 
+          }),
+        ]
+        expect(response.body.products).toEqual(expect.arrayContaining(expectedProducts));
+        expect(response.body.products).toEqual(expect.not.arrayContaining(excludedProducts));
     });
 
     test("return related products for laptop", async () => {
@@ -62,70 +64,76 @@ describe('Related Product Controller Integration Test', () => {
       const cid = new ObjectId('66db427fdb0119d9234b27ed');
       const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
       expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-          success: true,
-          products: expect.arrayContaining([
-            expect.not.objectContaining({ 
-              name: 'Laptop', 
-              price: 1499.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'Textbook', 
-              price: 79.99, 
-            }),
-            expect.objectContaining({ 
-              name: 'Smartphone', 
-              price: 999.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'The Law of Contract in Singapore', 
-              price: 54.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'Novel', 
-              price: 14.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'NUS T-shirt', 
-              price: 4.99, 
-            }),
-          ])
-        }); 
+      expect(response.body.success).toBe(true);
+      const expectedProducts = [
+        expect.objectContaining({ 
+          name: 'Smartphone', 
+          price: 999.99, 
+        }),
+      ]
+      const excludedProducts = [
+        expect.objectContaining({ 
+          name: 'Textbook', 
+          price: 79.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'The Law of Contract in Singapore', 
+          price: 54.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'Laptop', 
+          price: 1499.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'Novel', 
+          price: 14.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'NUS T-shirt', 
+          price: 4.99, 
+        }),
+      ]
+      expect(response.body.products).toEqual(expect.arrayContaining(expectedProducts));
+      expect(response.body.products).toEqual(expect.not.arrayContaining(excludedProducts));
+ 
   });
   test("return related products for smartphone", async () => {
     const pid = new ObjectId('66db427fdb0119d9234b27f5');
     const cid = new ObjectId('66db427fdb0119d9234b27ed');
     const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-        success: true,
-        products: expect.arrayContaining([
-          expect.objectContaining({ 
-            name: 'Laptop', 
-            price: 1499.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'Textbook', 
-            price: 79.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'Smartphone', 
-            price: 999.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'The Law of Contract in Singapore', 
-            price: 54.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'Novel', 
-            price: 14.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'NUS T-shirt', 
-            price: 4.99, 
-          }),
-        ])
-      }); 
+    expect(response.body.success).toBe(true);
+    const expectedProducts = [
+      expect.objectContaining({ 
+        name: 'Laptop', 
+        price: 1499.99, 
+      }),
+    ]
+    const excludedProducts = [
+      expect.objectContaining({ 
+        name: 'Textbook', 
+        price: 79.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'The Law of Contract in Singapore', 
+        price: 54.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'Smartphone', 
+        price: 999.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'Novel', 
+        price: 14.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'NUS T-shirt', 
+        price: 4.99, 
+      }),
+    ]
+    expect(response.body.products).toEqual(expect.arrayContaining(expectedProducts));
+    expect(response.body.products).toEqual(expect.not.arrayContaining(excludedProducts));
+  
 });
 
       test("return related products for novel", async () => {
@@ -133,35 +141,38 @@ describe('Related Product Controller Integration Test', () => {
       const cid = new ObjectId('66db427fdb0119d9234b27ef');
       const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
       expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-          success: true,
-          products: expect.arrayContaining([
-            expect.not.objectContaining({ 
-              name: 'Laptop', 
-              price: 1499.99, 
-            }),
-            expect.objectContaining({ 
-              name: 'Textbook', 
-              price: 79.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'Smartphone', 
-              price: 999.99, 
-            }),
-            expect.objectContaining({ 
-              name: 'The Law of Contract in Singapore', 
-              price: 54.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'Novel', 
-              price: 14.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'NUS T-shirt', 
-              price: 4.99, 
-            }),
-          ])
-        }); 
+      expect(response.body.success).toBe(true);
+      const expectedProducts = [
+        expect.objectContaining({ 
+          name: 'Textbook', 
+          price: 79.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'The Law of Contract in Singapore', 
+          price: 54.99, 
+        }),
+      ]
+      const excludedProducts = [
+        expect.objectContaining({ 
+          name: 'Laptop', 
+          price: 1499.99, 
+        }),
+  
+        expect.objectContaining({ 
+          name: 'Smartphone', 
+          price: 999.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'Novel', 
+          price: 14.99, 
+        }),
+        expect.objectContaining({ 
+          name: 'NUS T-shirt', 
+          price: 4.99, 
+        }),
+      ]
+      expect(response.body.products).toEqual(expect.arrayContaining(expectedProducts));
+      expect(response.body.products).toEqual(expect.not.arrayContaining(excludedProducts));
   });
 
   test("return related products for law-of-contract", async () => {
@@ -169,35 +180,39 @@ describe('Related Product Controller Integration Test', () => {
     const cid = new ObjectId('66db427fdb0119d9234b27ef');
     const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-        success: true,
-        products: expect.arrayContaining([
-          expect.not.objectContaining({ 
-            name: 'Laptop', 
-            price: 1499.99, 
-          }),
-          expect.objectContaining({ 
-            name: 'Textbook', 
-            price: 79.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'Smartphone', 
-            price: 999.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'The Law of Contract in Singapore', 
-            price: 54.99, 
-          }),
-          expect.objectContaining({ 
-            name: 'Novel', 
-            price: 14.99, 
-          }),
-          expect.not.objectContaining({ 
-            name: 'NUS T-shirt', 
-            price: 4.99, 
-          }),
-        ])
-      }); 
+    expect(response.body.success).toBe(true);
+    const expectedProducts = [
+      expect.objectContaining({ 
+        name: 'Textbook', 
+        price: 79.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'Novel', 
+        price: 14.99, 
+      }),
+    ]
+    const excludedProducts = [
+      expect.objectContaining({ 
+        name: 'Laptop', 
+        price: 1499.99, 
+      }),
+
+      expect.objectContaining({ 
+        name: 'Smartphone', 
+        price: 999.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'The Law of Contract in Singapore', 
+        price: 54.99, 
+      }),
+      expect.objectContaining({ 
+        name: 'NUS T-shirt', 
+        price: 4.99, 
+      }),
+    ]
+    expect(response.body.products).toEqual(expect.arrayContaining(expectedProducts));
+    expect(response.body.products).toEqual(expect.not.arrayContaining(excludedProducts));
+
 });
 
 
