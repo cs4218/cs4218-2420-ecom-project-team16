@@ -6,7 +6,6 @@ import fs from "fs";
 import slugify from "slugify";
 import braintree from "braintree";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -360,7 +359,6 @@ export const braintreeTokenController = async (req, res) => {
 //payment
 export const brainTreePaymentController = async (req, res) => {
   try {
-    console.log(req.body);
     const { nonce, cart } = req.body;
 
     if (!cart || !Array.isArray(cart)) {
@@ -368,6 +366,7 @@ export const brainTreePaymentController = async (req, res) => {
     }
 
     let total = cart.reduceRight((acc, item) => acc + (item.price || 0), 0);
+    total = Math.round(total * 100) / 100;
     
     gateway.transaction.sale(
       {
@@ -376,11 +375,12 @@ export const brainTreePaymentController = async (req, res) => {
         options: {
           submitForSettlement: true,
         },
+        orderId: Date.now().toString(),
       },
       async (error, result) => {
         if (error || !result || !result.success) {
           console.log(error, result);
-          return res.status(500).send({ error });
+          return res.status(500).send({ error, result });
         }
 
         const productIds = cart.map((item) => item._id);
