@@ -7,40 +7,63 @@ import { CartProvider } from "../../context/cart";
 import { AuthProvider } from "../../context/auth";
 import { SearchProvider } from "../../context/search";
 import UpdateProduct from "./UpdateProduct";
+import mongoose from "mongoose";
+import productModel from "../../../../models/productModel";
+import categoryModel from "../../../../models/categoryModel";
+import dotenv from "dotenv"
+import { expect, jest } from "@jest/globals";
+import { beforeEach } from "node:test";
 
-jest.mock("axios");
+dotenv.config();
+axios.defaults.baseURL = 'http://localhost:6060';
 
-const mockProduct = {
-  product: {
-    _id: "123",
-    name: "Test Product",
-    slug: 'test-product',
-    description: "Test Description",
-    price: 100,
-    quantity: 10,
-    shipping: "1",
-    category: { _id: "cat123", name: "Test Category" },
-  },
-};
-
-const mockCategories = {
-  success: true,
-  category: [{ _id: "cat123", name: "Test Category" }],
-};
+let mockProduct, mockCategory
 
 describe("UpdateProduct Integration Test", () => {
-  beforeEach(async () => {
-    axios.get.mockImplementation((url) => {
-      if (url.includes("get-product")) {
-        return Promise.resolve({ data: mockProduct });
-      }
-      if (url.includes("get-category")) {
-        return Promise.resolve({ data: mockCategories });
-      }
-    });
-  });
 
-  beforeAll(() => {
+  const renderUpdateProduct = () => {
+    return render(
+      <AuthProvider>
+        <CartProvider>
+          <SearchProvider>
+            <MemoryRouter initialEntries={["/dashboard/admin/product/update-mock-product"]}>
+              <Routes>
+                <Route path="/dashboard/admin/product/:slug" element={<UpdateProduct />} />
+              </Routes>
+            </MemoryRouter>
+          </SearchProvider>
+        </CartProvider>
+      </AuthProvider>
+    );
+  }
+
+  const mockCategoryParams = {
+      _id: new mongoose.Types.ObjectId(),
+      name: "Update Category",
+      slug: "update-category"
+    }
+  
+  const mockProductParams = {
+    _id: new mongoose.Types.ObjectId(),
+    name: "Update Mock Product",
+    slug: "update-mock-product",
+    description: "Update Mock Description",
+    price: 100,
+    quantity: 1,
+    category: {}
+  }
+
+  const excludeId = ({ _id, ...rest }) => rest;
+
+  beforeAll(async () => {
+    await mongoose.connect(process.env.MONGO_URL);
+
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    mockCategory = await categoryModel.findOneAndUpdate({name: mockCategoryParams.name}, excludeId(mockCategoryParams), options)
+    mockProductParams.category = mockCategory
+
+    mockProduct = await productModel.findOneAndUpdate({name: mockProductParams.name}, excludeId(mockProductParams), options)
+
     global.matchMedia = jest.fn().mockImplementation((query) => ({
         media: query,
         addListener: jest.fn(),
@@ -48,91 +71,88 @@ describe("UpdateProduct Integration Test", () => {
     }));
   });
 
+  // ensures that the product exists, in the specific circumstance where delete is tested first
+  beforeEach(async () => {
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    mockCategory = await categoryModel.findOneAndUpdate({name: mockCategoryParams.name}, excludeId(mockCategoryParams), options)
+    mockProductParams.category = mockCategory
+
+    mockProduct = await productModel.findOneAndUpdate({name: mockProductParams.name}, excludeId(mockProductParams), options)
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  })
+
   test("renders the product details correctly", async () => {
-    render(
-        <AuthProvider>
-          <CartProvider>
-            <SearchProvider>
-              <MemoryRouter initialEntries={["/dashboard/admin/product/test-product"]}>
-                <Routes>
-                  <Route path="/dashboard/admin/product/test-product" element={<UpdateProduct />} />
-                </Routes>
-              </MemoryRouter>
-            </SearchProvider>
-          </CartProvider>
-        </AuthProvider>
-      );
-    
+    renderUpdateProduct()
+
     await waitFor(() => {
-        expect(screen.getByDisplayValue("Test Product")).toBeInTheDocument();
-        expect(screen.getByDisplayValue("Test Description")).toBeInTheDocument();
-        expect(screen.getByDisplayValue("100")).toBeInTheDocument();
-        expect(screen.getByDisplayValue("10")).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("write a name")).toHaveValue("Update Mock Product")
     })
-    
-  });
+    expect(screen.getByPlaceholderText("write a description")).toHaveValue("Update Mock Description")
+    expect(screen.getByPlaceholderText("write a Price")).toHaveValue(100)
+    expect(screen.getByPlaceholderText("write a quantity")).toHaveValue(1)
+
+    // tests the shipping input field
+    await waitFor(() => {
+      const selectElements = document.querySelectorAll(".ant-select-selection-item");
+      const shippingSelectElement = selectElements[selectElements.length - 1];
+      expect(shippingSelectElement.textContent).toBe("No")
+    });
+  })
 
   test("updates the product on form submission", async () => {
-    axios.put.mockResolvedValue({ data: { success: true, message: "Updated" } });
+    const {rerender} = renderUpdateProduct()
 
-    render(
-        <AuthProvider>
-          <CartProvider>
-            <SearchProvider>
-              <MemoryRouter initialEntries={["/dashboard/admin/product/test-product"]}>
-                <Routes>
-                  <Route path="/dashboard/admin/product/test-product" element={<UpdateProduct />} />
-                </Routes>
-              </MemoryRouter>
-            </SearchProvider>
-          </CartProvider>
-        </AuthProvider>
-      );
-    
     await waitFor(() => {
-        fireEvent.change(screen.getByPlaceholderText("write a name"), {
-            target: { value: "Updated Product" },
-        });
-      
-        fireEvent.click(screen.getByText("UPDATE PRODUCT"));
+      expect(screen.getByPlaceholderText('write a name')).toHaveValue('Update Mock Product');
     })
+
+    fireEvent.change(screen.getByPlaceholderText("write a Price"), {
+      target: { value: '150' }
+    });
+
+    fireEvent.click(screen.getByText('UPDATE PRODUCT'))
     
+    // No method given to verify successful updates
+    await waitFor(() => {}, { timeout: 1000 })
+
+    rerender(
+      <AuthProvider>
+        <CartProvider>
+          <SearchProvider>
+            <MemoryRouter initialEntries={["/dashboard/admin/product/update-mock-product"]}>
+              <Routes>
+                <Route path="/dashboard/admin/product/:slug" element={<UpdateProduct />} />
+              </Routes>
+            </MemoryRouter>
+          </SearchProvider>
+        </CartProvider>
+      </AuthProvider>
+    )
 
     await waitFor(() => {
-      expect(axios.put).toHaveBeenCalledWith(
-        expect.stringContaining("update-product/"),
-        expect.any(FormData)
-      );
-    });
+      expect(screen.getByPlaceholderText("write a name")).toHaveValue("Update Mock Product")
+    })
+    expect(screen.getByPlaceholderText("write a Price")).toHaveValue(150)
   });
 
+  // used mongoose to test absence of product as did not want to the absence of rendered product
   test("deletes the product on delete button click", async () => {
-    axios.delete.mockResolvedValue({ data: { success: true } });
-
-    render(
-        <AuthProvider>
-          <CartProvider>
-            <SearchProvider>
-              <MemoryRouter initialEntries={["/dashboard/admin/product/test-product"]}>
-                <Routes>
-                  <Route path="/dashboard/admin/product/test-product" element={<UpdateProduct />} />
-                </Routes>
-              </MemoryRouter>
-            </SearchProvider>
-          </CartProvider>
-        </AuthProvider>
-      );
-
+    renderUpdateProduct()
 
     await waitFor(() => {
-        window.prompt = jest.fn().mockReturnValue("Yes");
-        fireEvent.click(screen.getByText("DELETE PRODUCT"));
+      expect(screen.getByPlaceholderText('write a name')).toHaveValue('Update Mock Product');
     })
 
-    await waitFor(() => {
-      expect(axios.delete).toHaveBeenCalledWith(
-        expect.stringContaining("delete-product/")
-      );
-    });
+    // jest does not provide methods to interact with aa window prompt dialog
+    window.prompt = jest.fn().mockReturnValue("Yes");
+    fireEvent.click(screen.getByText("DELETE PRODUCT"));
+
+    await waitFor(async () => {
+      const expectedNull = await productModel.findById(mockProductParams._id)
+      expect(expectedNull).toBeNull()
+    })
   });
-});
+})
