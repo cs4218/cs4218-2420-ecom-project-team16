@@ -5,7 +5,4 @@ node_modules
 /playwright/.cache/
 /coverage
 /sonar-project.properties
-/tests
-/tests-examples
-/jest.frontend.config.js
-/jest.backend.config.js
+

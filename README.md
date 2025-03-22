@@ -13,12 +13,18 @@ Make sure you have the following installed:
    cd cs4218-2420-ecom-project-team16
    ```
 
-2. Install dependencies:
+2. Install dependencies in both frontend and backend folder:
+   From root directory, install backend dependencies:
    ```sh
    npm install  
    ```
+   Move to frontend directory and install frontend dependencies:
+   ```sh
+   cd client
+   npm install
+   ```
 
-3. Set up environment variables:
+4. Set up environment variables:
    Overwrite the .env file in the code with the one in Canvas .zip file
 
 ## Running the Application
