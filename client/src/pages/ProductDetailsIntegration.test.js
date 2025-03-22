@@ -20,7 +20,6 @@ let mockProduct, relatedProduct, mockCategory
 
 describe("Product Details Integration Test", () => {
   
-
   const renderProductDetails = () => {
     render(
       <AuthProvider>
