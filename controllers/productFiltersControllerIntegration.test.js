@@ -128,4 +128,39 @@ describe("Product Filters Controller Integration Test", () => {
           });
     });
 
+    it("filters products with both checked and price filters applied", async () => {
+      const electronicsCategory = new ObjectId('66db427fdb0119d9234b27ed');
+      const response = await request(app).post('/api/filter-products').send({checked: [electronicsCategory], radio: [0, 1000]});
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+          success: true,
+          products: expect.arrayContaining([
+              expect.not.objectContaining({ 
+                  name: 'Laptop', 
+                  price: 1499.99, 
+                }),
+                expect.not.objectContaining({ 
+                  name: 'Textbook', 
+                  price: 79.99, 
+                }),
+                expect.objectContaining({ 
+                  name: 'Smartphone', 
+                  price: 999.99, 
+                }),
+                expect.not.objectContaining({ 
+                  name: 'The Law of Contract in Singapore', 
+                  price: 54.99, 
+                }),
+                expect.not.objectContaining({ 
+                  name: 'Novel', 
+                  price: 14.99, 
+                }),
+                expect.not.objectContaining({ 
+                  name: 'NUS T-shirt', 
+                  price: 4.99, 
+                }),
+          ])
+        });
+  });
+
 })
