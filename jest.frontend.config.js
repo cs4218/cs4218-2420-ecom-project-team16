@@ -44,7 +44,9 @@ export default {
   "client/src/pages/admin/AdminOrders.js",
   "client/src/pages/admin/UpdateProduct.test.js", 
   "client/src/pages/admin/Products.test.js", 
-  "client/src/pages/ProductDetails.test.js"],
+  "client/src/pages/ProductDetails.test.js",
+],
+
   coverageThreshold: {
     global: {
       lines: 100,
