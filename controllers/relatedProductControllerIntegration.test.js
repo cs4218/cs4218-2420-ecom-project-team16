@@ -127,77 +127,6 @@ describe('Related Product Controller Integration Test', () => {
         ])
       }); 
 });
-test("return related products for textbook", async () => {
-        const pid = new ObjectId('66db427fdb0119d9234b27f1');
-        const cid = new ObjectId('66db427fdb0119d9234b27ef');
-        const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            success: true,
-            products: expect.arrayContaining([
-              expect.not.objectContaining({ 
-                name: 'Laptop', 
-                price: 1499.99, 
-              }),
-              expect.not.objectContaining({ 
-                name: 'Textbook', 
-                price: 79.99, 
-              }),
-              expect.not.objectContaining({ 
-                name: 'Smartphone', 
-                price: 999.99, 
-              }),
-              expect.objectContaining({ 
-                name: 'The Law of Contract in Singapore', 
-                price: 54.99, 
-              }),
-              expect.objectContaining({ 
-                name: 'Novel', 
-                price: 14.99, 
-              }),
-              expect.not.objectContaining({ 
-                name: 'NUS T-shirt', 
-                price: 4.99, 
-              }),
-            ])
-          }); 
-    });
-
-    test("return related products for novel", async () => {
-      const pid = new ObjectId('66db427fdb0119d9234b27f9');
-      const cid = new ObjectId('66db427fdb0119d9234b27ef');
-      const response = await request(app).get(`/api/related-product/${pid}/${cid}`);
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-          success: true,
-          products: expect.arrayContaining([
-            expect.not.objectContaining({ 
-              name: 'Laptop', 
-              price: 1499.99, 
-            }),
-            expect.objectContaining({ 
-              name: 'Textbook', 
-              price: 79.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'Smartphone', 
-              price: 999.99, 
-            }),
-            expect.objectContaining({ 
-              name: 'The Law of Contract in Singapore', 
-              price: 54.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'Novel', 
-              price: 14.99, 
-            }),
-            expect.not.objectContaining({ 
-              name: 'NUS T-shirt', 
-              price: 4.99, 
-            }),
-          ])
-        }); 
-  });
 
       test("return related products for novel", async () => {
       const pid = new ObjectId('66db427fdb0119d9234b27f9');
@@ -279,32 +208,7 @@ test("return related products for t-shirt", async () => {
   expect(response.status).toBe(200);
   expect(response.body).toEqual({
       success: true,
-      products: expect.arrayContaining([
-        expect.not.objectContaining({ 
-          name: 'Laptop', 
-          price: 1499.99, 
-        }),
-        expect.not.objectContaining({ 
-          name: 'Textbook', 
-          price: 79.99, 
-        }),
-        expect.not.objectContaining({ 
-          name: 'Smartphone', 
-          price: 999.99, 
-        }),
-        expect.not.objectContaining({ 
-          name: 'The Law of Contract in Singapore', 
-          price: 54.99, 
-        }),
-        expect.not.objectContaining({ 
-          name: 'Novel', 
-          price: 14.99, 
-        }),
-        expect.not.objectContaining({ 
-          name: 'NUS T-shirt', 
-          price: 4.99, 
-        }),
-      ])
+      products: []
     }); 
 });
   
