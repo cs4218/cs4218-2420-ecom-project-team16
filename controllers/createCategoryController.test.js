@@ -40,8 +40,8 @@ describe("Test Create Category Controller", () => {
     });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith({
-      success: true,
-      message: "Category Already Exisits",
+      success: false,
+      message: "Category Already Exists",
     });
   });
   test("category created when category doesnt exist yet", async () => {
@@ -83,7 +83,7 @@ describe("Test Create Category Controller", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       error: error,
-      message: "Errro in Category",
+      message: "Error in Category",
     });
   });
 });
