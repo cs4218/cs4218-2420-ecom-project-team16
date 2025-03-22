@@ -71,7 +71,7 @@ beforeAll(async () => {
           email: "admin@test.sg", 
           name: "admin@test.sg", 
           password: process.env.TEST_ADMIN_PASS,
-          phone: "98765432", 
+          phone: "admin@test.sg", 
           address: "Modified test address"
       }
 
