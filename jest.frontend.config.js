@@ -28,7 +28,6 @@ export default {
   "<rootDir>/client/src/context/*.test.js",
   "<rootDir>/client/src/components/*.test.js",
   "<rootDir>/client/src/components/Routes/*.test.js",
-  "<rootDir>/client/src/pages/ProductDetails.test.js",
   "<rootDir>/client/src/pages/*.test.js"],
 
   // jest code coverage
