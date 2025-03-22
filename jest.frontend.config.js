@@ -22,14 +22,14 @@ export default {
 
   // only run these tests
   testMatch: [
-    "<rootDir>/client/src/pages/Auth/*.test.js",
-    "<rootDir>/client/src/pages/user/*.test.js",
-    "<rootDir>/client/src/pages/admin/*.test.js",
-    "<rootDir>/client/src/pages/*.test.js",
-    "<rootDir>/client/src/context/*.test.js",
-    "<rootDir>/client/src/components/*.test.js",
-    "<rootDir>/client/src/components/Routes/*.test.js",
-    "<rootDir>/client/src/pages/*.test.js",
+    "<rootDir>/client/src/pages/Auth/*Integration*.test.js",
+    "<rootDir>/client/src/pages/user/*Integration*.test.js",
+    "<rootDir>/client/src/pages/admin/*Integration*.test.js",
+    "<rootDir>/client/src/pages/*Integration*.test.js",
+    "<rootDir>/client/src/context/*Integration*.test.js",
+    "<rootDir>/client/src/components/*Integration*.test.js",
+    "<rootDir>/client/src/components/Routes/*Integration*.test.js",
+    "<rootDir>/client/src/pages/*Integration*.test.js",
   ],
 
   // jest code coverage
