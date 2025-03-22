@@ -77,6 +77,8 @@ describe("Product Details Integration Test", () => {
     mockProduct = await productModel.findOneAndUpdate({name: mockProductParams.name}, excludeId(mockProductParams), options)
     relatedProduct = await productModel.findOneAndUpdate({name: relatedProductParams.name}, excludeId(relatedProductParams), options)
 
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
     global.matchMedia = jest.fn().mockImplementation((query) => ({
       media: query,
       addListener: jest.fn(),
@@ -96,22 +98,21 @@ describe("Product Details Integration Test", () => {
       renderProductDetails()
 
       await waitFor(() => {
-          expect(screen.getByText(/Test Product/)).toBeInTheDocument();
+        expect(screen.getByText(/Test Product/)).toBeInTheDocument();
+        expect(screen.getByText(/Test Description/)).toBeInTheDocument();
+        expect(screen.getByText(/100/)).toBeInTheDocument();
+        expect(screen.getByText(/Category : Test Category/)).toBeInTheDocument();
       })
-
-      expect(screen.getByText(/Test Description/)).toBeInTheDocument();
-      expect(screen.getByText(/100/)).toBeInTheDocument();
-      expect(screen.getByText(/Category : Test Category/)).toBeInTheDocument();
   })
 
   test("renders related product", async () => {
     renderProductDetails()
 
     await waitFor(() => {
-        expect(screen.getByText(/Related Product/)).toBeInTheDocument()
+      expect(screen.getByText("Related Product")).toBeInTheDocument()
+      expect(screen.getByText(/Related Description/)).toBeInTheDocument()
+      expect(screen.getByText(/100/)).toBeInTheDocument()
     })
-    expect(screen.getByText(/Related Description/)).toBeInTheDocument()
-    expect(screen.getByText(/100/)).toBeInTheDocument()
   })
 
   test("adds product to cart", async () => {

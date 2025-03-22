@@ -64,6 +64,8 @@ describe("UpdateProduct Integration Test", () => {
 
     mockProduct = await productModel.findOneAndUpdate({name: mockProductParams.name}, excludeId(mockProductParams), options)
 
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     global.matchMedia = jest.fn().mockImplementation((query) => ({
         media: query,
         addListener: jest.fn(),
@@ -78,6 +80,7 @@ describe("UpdateProduct Integration Test", () => {
     mockProductParams.category = mockCategory
 
     mockProduct = await productModel.findOneAndUpdate({name: mockProductParams.name}, excludeId(mockProductParams), options)
+    await new Promise((resolve) => setTimeout(resolve, 500));
   })
 
   afterAll(async () => {
@@ -140,6 +143,7 @@ describe("UpdateProduct Integration Test", () => {
 
   // used mongoose to test absence of product as did not want to the absence of rendered product
   test("deletes the product on delete button click", async () => {
+    jest.spyOn(console, 'warn').mockImplementation(() => {})
     renderUpdateProduct()
 
     await waitFor(() => {
@@ -151,7 +155,7 @@ describe("UpdateProduct Integration Test", () => {
     fireEvent.click(screen.getByText("DELETE PRODUCT"));
 
     await waitFor(async () => {
-      const expectedNull = await productModel.findById(mockProductParams._id)
+      const expectedNull = await productModel.findById(mockProduct._id)
       expect(expectedNull).toBeNull()
     })
   });
