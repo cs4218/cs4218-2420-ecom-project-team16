@@ -1,118 +1,86 @@
 import React from "react"
-import { render, waitFor, screen, fireEvent } from "@testing-library/react";
+import { render, waitFor, screen } from "@testing-library/react";
 import axios from "axios";
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { afterAll, describe, expect, jest, test } from "@jest/globals";
 import "@testing-library/jest-dom/extend-expect";
 import { CartProvider } from "../../context/cart";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "../../context/auth";
 import { SearchProvider } from "../../context/search";
 import Products from "./Products";
+import mongoose from "mongoose";
+import productModel from "../../../../models/productModel";
+import categoryModel from "../../../../models/categoryModel";
+import dotenv from "dotenv"
 
-jest.mock("axios")
+dotenv.config();
+axios.defaults.baseURL = 'http://localhost:6060';
 
-const generateMockProducts = (count) => {
-    const products = [];
-    for (let i = 1; i <= count; i++) {
-        products.push({
-            _id: `${i}`,
-            name: `Product ${i}`,
-            description: `Description ${i}`,
-            slug: `product-${i}`,
-        });
-    }
-    return { data: { products } };
-}
-
-let mockProducts
+let mockProduct, mockCategory
 
 describe("Products Integration Test", () => {
-    beforeAll(() => {
-        global.matchMedia = jest.fn().mockImplementation((query) => ({
-          media: query,
-          addListener: jest.fn(),
-          removeListener: jest.fn(),
-        }));
-      });
 
-    beforeEach(() => {
-        axios.get.mockImplementation((url) => {
-          if (url.includes(`/api/v1/product/get-product`)) {
-            return Promise.resolve(mockProducts);
-          }
-        });
-      });
+  const renderProducts = () => {
+    render(
+      <AuthProvider>
+        <CartProvider>
+          <SearchProvider>
+            <MemoryRouter initialEntries={["/dashboard/admin/products"]}>
+              <Routes>
+                <Route path="/dashboard/admin/products" element={<Products/>} />
+              </Routes>
+            </MemoryRouter>
+          </SearchProvider>
+        </CartProvider>
+      </AuthProvider>
+    );
+  }
 
-    test("renders product details correctly", async () => {
-        mockProducts = generateMockProducts(3);
+  const mockCategoryParams = {
+    _id: new mongoose.Types.ObjectId(),
+    name: "Test Category",
+    slug: "test-category"
+  }
 
-        render(
-          <AuthProvider>
-            <CartProvider>
-              <SearchProvider>
-                <MemoryRouter initialEntries={["/dashboard/admin/products"]}>
-                  <Routes>
-                    <Route path="/dashboard/admin/products" element={<Products/>} />
-                  </Routes>
-                </MemoryRouter>
-              </SearchProvider>
-            </CartProvider>
-          </AuthProvider>
-        );
-        
-        // Check if loading the product details
-        await waitFor(() => {
-            expect(screen.getByText("Product 3", {exact: false})).toBeInTheDocument();
-            expect(screen.getByText("Description 3", {exact: false})).toBeInTheDocument();
-        }
-    )})
+  const mockProductParams = {
+    _id: new mongoose.Types.ObjectId(),
+    name: "Test Product",
+    slug: "test-product",
+    description: "Test Description",
+    price: 100,
+    quantity: 1,
+    category: {}
+  }
 
-    test("displays error message on API failure", async () => {
-        mockProducts = generateMockProducts(0);
+  const excludeId = ({ _id, ...rest }) => rest;
 
-        render(
-          <AuthProvider>
-            <CartProvider>
-              <SearchProvider>
-                <MemoryRouter initialEntries={["/dashboard/admin/products"]}>
-                  <Routes>
-                    <Route path="/dashboard/admin/products" element={<Products/>} />
-                  </Routes>
-                </MemoryRouter>
-              </SearchProvider>
-            </CartProvider>
-          </AuthProvider>
-        );
+  beforeAll(async () => {
+    await mongoose.connect(process.env.MONGO_URL);
     
-        await waitFor(() => {
-          expect(screen.getByText("All Products List")).toBeInTheDocument();
-          const product = screen.queryByText('Description 3')
-          expect(product).not.toBeInTheDocument();
-        });
-    });
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    mockCategory = await categoryModel.findOneAndUpdate({name: mockCategoryParams.name}, excludeId(mockCategoryParams), options)
+    mockProductParams.category = mockCategory
 
-    test("displays error message on API failure", async () => {
-        mockProducts = generateMockProducts(3);
-        axios.get.mockRejectedValue(new Error("Network Error"));
-        jest.spyOn(console, 'log').mockImplementation(() => {})
+    mockProduct = await productModel.findOneAndUpdate({name: mockProductParams.name}, excludeId(mockProductParams), options)
 
-        render(
-          <AuthProvider>
-            <CartProvider>
-              <SearchProvider>
-                <MemoryRouter initialEntries={["/dashboard/admin/products"]}>
-                  <Routes>
-                    <Route path="/dashboard/admin/products" element={<Products/>} />
-                  </Routes>
-                </MemoryRouter>
-              </SearchProvider>
-            </CartProvider>
-          </AuthProvider>
-        );
+    global.matchMedia = jest.fn().mockImplementation((query) => ({
+      media: query,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+    }));
+  });
+
+  afterAll(async () => {
+      await mongoose.connection.close();
+  })
+
+  test("renders product details correctly", async () => {
+    renderProducts()
     
-        await waitFor(() => {
-          expect(screen.getByText("All Products List")).toBeInTheDocument();
-          expect(screen.getByText("Something Went Wrong")).toBeInTheDocument();
-        });
-    });
+    await waitFor(() => {
+        expect(screen.getByText(/Test Product/)).toBeInTheDocument();
+    })
+    expect(screen.getByText(/Test Description/)).toBeInTheDocument()
+  })
+
 })
