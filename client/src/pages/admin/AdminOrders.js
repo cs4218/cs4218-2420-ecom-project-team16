@@ -69,7 +69,7 @@ const AdminOrders = () => {
                       <td>{i + 1}</td>
                       <td>
                         <Select
-                          bordered={false}
+                          variant="filled"
                           onChange={(value) => handleChange(o._id, value)}
                           defaultValue={o?.status}
                         >
