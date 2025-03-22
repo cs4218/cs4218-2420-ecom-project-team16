@@ -29,8 +29,9 @@ export default {
   // "<rootDir>/client/src/components/*.test.js",
   // "<rootDir>/client/src/components/Routes/*.test.js",
   // "<rootDir>/client/src/pages/ProductDetails.test.js",
-  "<rootDir>/client/src/pages/HomePageIntegration.test.js"],
-    //"<rootDir>/client/src/pages/*Integration.test.js"],
+  "<rootDir>/client/src/pages/Auth/*Integration.test.js",
+  "<rootDir>/client/src/pages/*Integration.test.js",
+  ],
 
   // jest code coverage
   collectCoverage: true,

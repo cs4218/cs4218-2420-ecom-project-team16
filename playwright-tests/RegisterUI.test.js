@@ -45,3 +45,22 @@ test("Unable to register with empty form", async ({ page }) => {
     await page.getByRole('button', { name: 'REGISTER' }).click();
     await expect(page.getByRole('heading', { name: 'REGISTER FORM' })).toBeVisible();
 });
+
+test("Unable to register with registered email", async ({ page }) => {
+    await page.goto('http://localhost:3000/register');
+    await page.getByRole('textbox', { name: 'Enter Your Name' }).click();
+    await page.getByRole('textbox', { name: 'Enter Your Name' }).fill('Test');
+    await page.getByRole('textbox', { name: 'Enter Your Email' }).click();
+    await page.getByRole('textbox', { name: 'Enter Your Email' }).fill('cs4218@test.com');
+    await page.getByRole('textbox', { name: 'Enter Your Password' }).click();
+    await page.getByRole('textbox', { name: 'Enter Your Password' }).fill('cs4218@test.com');
+    await page.getByRole('textbox', { name: 'Enter Your Phone' }).click();
+    await page.getByRole('textbox', { name: 'Enter Your Phone' }).fill('11111111');
+    await page.getByRole('textbox', { name: 'Enter Your Address' }).click();
+    await page.getByRole('textbox', { name: 'Enter Your Address' }).fill('123 Street');
+    await page.getByPlaceholder('Enter Your DOB').fill('2025-03-14');
+    await page.getByRole('textbox', { name: 'What is Your Favorite sports' }).click();
+    await page.getByRole('textbox', { name: 'What is Your Favorite sports' }).fill('Badminton');
+    await page.getByRole('button', { name: 'REGISTER' }).click();
+    await expect(page.getByText('Already Register please login')).toBeVisible();
+});
