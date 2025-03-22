@@ -29,7 +29,6 @@ export default {
     "<rootDir>/client/src/context/*.test.js",
     "<rootDir>/client/src/components/*.test.js",
     "<rootDir>/client/src/components/Routes/*.test.js",
-    "<rootDir>/client/src/pages/ProductDetails.test.js",
     "<rootDir>/client/src/pages/*.test.js",
   ],
 
@@ -49,6 +48,7 @@ export default {
     "client/src/pages/admin/Products.test.js",
     "client/src/pages/ProductDetails.test.js",
   ],
+
   coverageThreshold: {
     global: {
       lines: 100,

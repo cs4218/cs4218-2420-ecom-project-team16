@@ -40,7 +40,7 @@ describe("Test Create Category Controller", () => {
     });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith({
-      success: true,
+      success: false,
       message: "Category Already Exists",
     });
   });

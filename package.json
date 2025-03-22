@@ -11,7 +11,8 @@
     "sonarqube": "sonar-scanner",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:frontend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js",
-    "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js --detectOpenHandles"
+    "test:fast-frontend": "start-server-and-test 'npm run server' http://localhost:6060 'node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js'",
+    "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js"
   },
   "keywords": [],
   "author": "RP",
@@ -47,8 +48,8 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "mongodb-memory-server": "^10.1.4",
-    "mongoose": "^8.12.1",
-    "sonarqube-scanner": "^3.3.0"
+    "sonarqube-scanner": "^3.3.0",
+    "start-server-and-test": "^2.0.11",
+    "supertest": "^7.0.0"
   }
 }
