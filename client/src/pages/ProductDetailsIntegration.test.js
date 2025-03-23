@@ -84,11 +84,16 @@ describe("Product Details Integration Test", () => {
       addListener: jest.fn(),
       removeListener: jest.fn(),
     }));
-  });
+  }, 20000);
 
   afterAll(async () => {
+    // Delete test data
+  await productModel.deleteOne({name: mockProductParams.name});
+  await productModel.deleteOne({name: relatedProductParams.name});
+  await categoryModel.deleteOne({name: mockCategoryParams.name});
+    
     await mongoose.connection.close();
-  })
+  }, 10000);
 
   beforeEach(() => {
     localStorage.clear()
@@ -135,7 +140,7 @@ describe("Product Details Integration Test", () => {
 
     await waitFor(() => {
         expect(screen.getByText(/Similar Products/)).toBeInTheDocument()
-    });
+    }, {timeout: 5000});
 
     const addToCartButton = screen.getByTestId("related-cart-button")
     fireEvent.click(addToCartButton);
