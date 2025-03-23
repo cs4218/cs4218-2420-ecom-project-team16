@@ -4,6 +4,7 @@ import userModel from "../models/userModel";
 import { comparePassword, hashPassword } from "../helpers/authHelper";
 import JWT from "jsonwebtoken";
 import orderModel from "../models/orderModel.js";
+import { expect } from "@playwright/test";
 
 jest.mock("../models/userModel.js");
 jest.mock("../helpers/authHelper.js");
@@ -354,7 +355,7 @@ describe("Update Profile Controller Tests", () => {
   });
   test("Password of length < 6", async () => {
     req.body.password = "12345";
-    userModel.findById = jest.fn().mockResolvedValue(null);
+    userModel.findById = jest.fn().mockResolvedValue("Have user");
 
     await updateProfileController(req, res);
     expect(res.json).toHaveBeenCalledWith({ error: "Passsword is required and is at least 6 characters long" });
@@ -362,7 +363,7 @@ describe("Update Profile Controller Tests", () => {
 
   test("Null password should be rejected", async () => {
     req.body.password = "";
-    userModel.findById = jest.fn().mockResolvedValue(null);
+    userModel.findById = jest.fn().mockResolvedValue("Have user");
 
     await updateProfileController(req, res);
     expect(res.json).toHaveBeenCalledWith({ error: "Passsword is required and is at least 6 characters long" });
@@ -387,7 +388,7 @@ describe("Update Profile Controller Tests", () => {
   })
 
   test("Successful Update with all new data", async () => {
-    userModel.findById = jest.fn().mockResolvedValue(null);
+    userModel.findById = jest.fn().mockResolvedValue("Have user");
     hashPassword.mockResolvedValue("123456");
     userModel.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
 

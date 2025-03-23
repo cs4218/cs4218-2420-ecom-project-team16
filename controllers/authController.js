@@ -144,6 +144,9 @@ export const forgotPasswordController = async (req, res) => {
       });
     }
     const hashed = await hashPassword(newPassword);
+    if (!hashed) {
+      res.status(400).send({ message: "Error in hashing" });
+    }
     await userModel.findByIdAndUpdate(user._id, { password: hashed });
     res.status(200).send({
       success: true,
@@ -174,6 +177,9 @@ export const updateProfileController = async (req, res) => {
   try {
     const { name, email, password, address, phone } = req.body;
     const user = await userModel.findById(req.user._id);
+    if (!user) {
+      return res.status(400).send({ message : "No user found" });
+    }
     if (password?.length < 6) {
       return res.json({ error: "Passsword is required and is at least 6 characters long" });
     }
@@ -244,6 +250,12 @@ export const orderStatusController = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
+    // Note that for some reason, findByIdAndUpdate does not check the status enum so need
+    // to manually check here
+    const possibleStatus = ["Not Process", "Processing", "Shipped", "deliverd", "cancel"];
+    if (!possibleStatus.includes(status)) {
+      res.status(400).send({ message : "Status is not recognized"});
+    }
     const orders = await orderModel.findByIdAndUpdate(
       orderId,
       { status },
