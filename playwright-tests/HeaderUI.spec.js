@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe("Header UI", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('http://localhost:3000/login');
-        await page.locator('input[id="exampleInputEmail1"]').fill('hongshan@gmail.com');
-        await page.locator('input[id="exampleInputPassword1"]').fill('hongshan');
+        await page.locator('input[id="exampleInputEmail1"]').fill('admin@test.sg');
+        await page.locator('input[id="exampleInputPassword1"]').fill('admin@test.sg');
         await page.locator('button:has-text("LOGIN")').click();
         await page.waitForURL('http://localhost:3000/');
     });
@@ -37,11 +37,11 @@ test.describe("Header UI", () => {
     });
 
     test("Should logout", async ({ page }) => {
-        await page.locator('a:has-text("Hong Shan")').click();
+        await page.locator('a:has-text("ADMIN@TEST.SG")').click();
         await page.locator('a:has-text("LOGOUT")').click();
         await expect(page.locator('a:has-text("LOGIN")')).toBeVisible();
         const auth = await page.evaluate(() => localStorage.getItem('auth'));
         expect(auth).toBeNull();
-        await expect(page.locator('a:has-text("Hong Shan")')).not.toBeVisible();
+        await expect(page.locator('a:has-text("ADMIN@TEST.SG")')).not.toBeVisible();
     });
 });

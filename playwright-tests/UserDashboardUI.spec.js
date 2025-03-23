@@ -10,17 +10,17 @@ test.describe("Auth Integration", () => {
 
     test("Should login and see relevant details in localStorage", async ({ page }) => {
         await page.goto('http://localhost:3000/login');
-        await page.locator('input[id="exampleInputEmail1"]').fill('hongshan@gmail.com');
-        await page.locator('input[id="exampleInputPassword1"]').fill('hongshan');
+        await page.locator('input[id="exampleInputEmail1"]').fill('admin@test.sg');
+        await page.locator('input[id="exampleInputPassword1"]').fill('admin@test.sg');
         await page.getByRole('button', { name: 'LOGIN' }).click();
 
         await page.waitForURL('http://localhost:3000/');
         const auth = await page.evaluate(() => {
             return JSON.parse(localStorage.getItem('auth'));
         });
-        expect(auth.user.name).toBe('Hong Shan');
+        expect(auth.user.name).toBe('admin@test.sg');
         expect(auth.token).toBeTruthy();
-        expect(auth.user.email).toBe('hongshan@gmail.com');
+        expect(auth.user.email).toBe('admin@test.sg');
     });
 
     test("Should redirect to login page if not logged in, with spinner", async ({ page }) => {
@@ -42,13 +42,13 @@ test.describe("Auth Integration", () => {
 
     test("Should show name, dashboard, and logout links when logged in", async ({ page }) => {
         await page.goto('http://localhost:3000/login');
-        await page.locator('input[id="exampleInputEmail1"]').fill('hongshan@gmail.com');
-        await page.locator('input[id="exampleInputPassword1"]').fill('hongshan');
+        await page.locator('input[id="exampleInputEmail1"]').fill('admin@test.sg');
+        await page.locator('input[id="exampleInputPassword1"]').fill('admin@test.sg');
         await page.getByRole('button', { name: 'LOGIN' }).click();
 
         await page.waitForURL('http://localhost:3000/');
-        await expect(page.locator('a:has-text("Hong Shan")')).toBeVisible();
-        await page.locator('a:has-text("Hong Shan")').click();
+        await expect(page.locator('a:has-text("admin@test.sg")')).toBeVisible();
+        await page.locator('a:has-text("admin@test.sg")').click();
         await expect(page.locator('a:has-text("Dashboard")')).toBeVisible();
         await expect(page.locator('a:has-text("Logout")')).toBeVisible();
         await expect(page.locator('a:has-text("Register")')).not.toBeVisible();
@@ -57,17 +57,16 @@ test.describe("Auth Integration", () => {
 
     test("Should show correct user details in dashboard", async ({ page }) => {
         await page.goto('http://localhost:3000/login');
-        await page.locator('input[id="exampleInputEmail1"]').fill('hongshan@gmail.com');
-        await page.locator('input[id="exampleInputPassword1"]').fill('hongshan');
+        await page.locator('input[id="exampleInputEmail1"]').fill('cs4218@test.com');
+        await page.locator('input[id="exampleInputPassword1"]').fill('cs4218@test.com');
         await page.getByRole('button', { name: 'LOGIN' }).click();
 
         await page.waitForURL('http://localhost:3000/');
-        await page.locator('a:has-text("Hong Shan")').click();
+        await page.locator('a:has-text("CS 4218 TEST ACCOUNT")').click();
         await page.locator('a:has-text("Dashboard")').click();
         
         await page.waitForURL('http://localhost:3000/dashboard/user');
-        await expect(page.locator('text=Hong Shan')).toHaveCount(2);
-        await expect(page.locator('text=hongshan@gmail.com')).toBeVisible();
-        await expect(page.locator('text=Redhill')).toBeVisible();
+        await expect(page.locator('text=cs4218@test.com')).toBeVisible();
+        await expect(page.locator('text=1 Computing Drive')).toBeVisible();
     });
 })

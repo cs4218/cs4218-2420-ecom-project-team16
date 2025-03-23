@@ -5,13 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export default defineConfig({
-    use: {
-        MONGO_URL: process.env.MONGO_URL || "mongodb+srv://nealetham:nealetham@cs4218-cluster.zlxyv.mongodb.net/cs4218-virtualvault",
-    }
-});
-
-test.describe.configure({ retries: 3 });
+// test.describe.configure({ retries: 3 });
 
 test.describe("Cart Page Auth Full Cart", () => {
     test.beforeEach(async ({ page }) => {
@@ -39,8 +33,13 @@ test.describe("Cart Page Auth Full Cart", () => {
         });
 
         // login
-        await page.locator('input[id="exampleInputEmail1"]').fill('hongshan@gmail.com');
-        await page.locator('input[id="exampleInputPassword1"]').fill('hongshan');
+        await page
+            .getByRole("textbox", { name: "Enter Your Email" })
+            .fill("admin@test.sg");
+        await page.getByRole("textbox", { name: "Enter Your Password" }).click();
+        await page
+            .getByRole("textbox", { name: "Enter Your Password" })
+            .fill("admin@test.sg");
         await page.getByRole('button', { name: 'LOGIN' }).click();
 
         // wait for navigation then go cart
@@ -98,7 +97,7 @@ test.describe("Cart Page Auth Full Cart", () => {
 
     test("Should show correct address", async ({ page }) => {
         await expect(page.locator('text=Current Address')).toHaveCount(1);
-        await expect(page.locator('text=Redhill')).toHaveCount(1);
+        await expect(page.locator('text=Modified test address')).toHaveCount(1);
     });
 
     test("Should make payment", async ({ page }) => {
@@ -119,7 +118,6 @@ test.describe("Cart Page Auth Full Cart", () => {
         // click make payment
         await page.click('text=Make Payment');
 
-        await page.pause();
         // navigate to order page
         await page.waitForURL(/order/);
 

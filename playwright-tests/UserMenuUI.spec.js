@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe("User Menu UI", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('http://localhost:3000/login');
-        await page.locator('input[id="exampleInputEmail1"]').fill('hongshan@gmail.com');
-        await page.locator('input[id="exampleInputPassword1"]').fill('hongshan');
+        await page.locator('input[id="exampleInputEmail1"]').fill('admin@test.sg');
+        await page.locator('input[id="exampleInputPassword1"]').fill('admin@test.sg');
         await page.getByRole('button', { name: 'LOGIN' }).click();
 
         await page.waitForURL('http://localhost:3000/');
