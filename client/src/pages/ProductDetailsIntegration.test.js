@@ -98,9 +98,9 @@ describe("Product Details Integration Test", () => {
       renderProductDetails()
 
       await waitFor(() => {
-        expect(screen.getByText(/Test Product/)).toBeInTheDocument();
-        expect(screen.getByText(/Test Description/)).toBeInTheDocument();
-        expect(screen.getByText(/100/)).toBeInTheDocument();
+        expect(screen.getByText("Test Product")).toBeInTheDocument();
+        expect(screen.getByText("Test Description...")).toBeInTheDocument();
+        expect(screen.getByText("$100.00")).toBeInTheDocument();
         expect(screen.getByText(/Category : Test Category/)).toBeInTheDocument();
       })
   })
@@ -111,7 +111,7 @@ describe("Product Details Integration Test", () => {
     await waitFor(() => {
       expect(screen.getByText("Related Product")).toBeInTheDocument()
       expect(screen.getByText(/Related Description/)).toBeInTheDocument()
-      expect(screen.getByText(/100/)).toBeInTheDocument()
+      expect(screen.getByText("$100.00")).toBeInTheDocument()
     })
   })
 
@@ -137,7 +137,7 @@ describe("Product Details Integration Test", () => {
         expect(screen.getByText(/Similar Products/)).toBeInTheDocument()
     });
 
-    const addToCartButton = screen.getByTestId("related-cart-button")
+    const addToCartButton = screen.getAllByTestId("related-cart-button")[1];
     fireEvent.click(addToCartButton);
 
     const cart = JSON.parse(localStorage.getItem("cart"));

@@ -78,9 +78,9 @@ describe("Products Integration Test", () => {
     renderProducts()
     
     await waitFor(() => {
-        expect(screen.getByText(/Test Product/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Test Product/).length).toBeGreaterThan(0)
     })
-    expect(screen.getByText(/Test Description/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Test Description/).length).toBeGreaterThan(0)
   })
 
 })
