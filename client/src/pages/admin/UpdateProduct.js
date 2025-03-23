@@ -33,7 +33,7 @@ const UpdateProduct = () => {
       setPrice(data.product.price);
       setQuantity(data.product.quantity);
       setShipping(data.product.shipping);
-      setCategory(data.product.category._id);
+      setCategory(data.product.category.name);
     } catch (error) {
       console.log(error);
     }
@@ -112,7 +112,7 @@ const UpdateProduct = () => {
             <h1>Update Product</h1>
             <div className="m-1 w-75">
               <Select
-                variant="filled"
+                variant={false}
                 placeholder="Select a category"
                 size="large"
                 showSearch
@@ -200,15 +200,15 @@ const UpdateProduct = () => {
               </div>
               <div className="mb-3">
                 <Select
-                  variant="filled"
-                  placeholder="Select Shipping "
+                  variant={false}
+                  placeholder="Select Shipping"
                   size="large"
                   showSearch
                   className="form-select mb-3"
                   onChange={(value) => {
                     setShipping(value);
                   }}
-                  value={shipping ? "yes" : "No"}
+                  value={shipping ? "Yes" : "No"}
                 >
                   <Option value="0">No</Option>
                   <Option value="1">Yes</Option>
