@@ -40,7 +40,7 @@ test.describe('adminMenu UI testing', () => {
 
         // Test create product
         await page.getByRole('link', { name: 'Create Product' }).click();
-        await page.locator('#rc_select_0').click();
+        await page.locator('div').filter({ hasText: /^Select a category$/ }).nth(1).click();
         await page.getByTitle('Electronics').locator('div').click();
         await page.getByRole('textbox', { name: 'write a name' }).click();
         await page.getByRole('textbox', { name: 'write a name' }).fill('Gameboy');
@@ -51,11 +51,11 @@ test.describe('adminMenu UI testing', () => {
         await page.getByPlaceholder('write a quantity').click();
         await page.getByPlaceholder('write a quantity').fill('1');
         await page.locator('#rc_select_1').click();
-        await page.getByText('Yes').click();
+        await page.getByText('No').click();
         await page.getByRole('button', { name: 'CREATE PRODUCT' }).click();
-        await page.getByRole('link', { name: 'Create Product' }).click();
-        await page.getByRole('link', { name: 'Products' }).click();
-        await expect(page.getByRole('main')).toContainText('Gameboy');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        await page.goto('http://localhost:3000/dashboard/admin/products');
+        await expect(page.getByRole('link', { name: 'Gameboy Gameboy Gameboy' })).toBeVisible();
         
 
         // Test edit product
