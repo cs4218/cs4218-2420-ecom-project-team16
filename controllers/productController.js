@@ -352,6 +352,11 @@ export const braintreeTokenController = async (req, res) => {
       }
     });
   } catch (error) {
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while getting token",
+    });
     console.log(error);
   }
 };
@@ -365,10 +370,15 @@ export const brainTreePaymentController = async (req, res) => {
       return res.status(400).send({ error: "Cart is required" });
     }
 
-    let total = cart.reduceRight((acc, item) => acc + (item.price || 0), 0);
+    let total = cart.reduce((acc, item) => {
+      if (!item.price || isNaN(item.price)) {
+        return acc;
+      }
+      return acc + item.price;
+    }, 0);
     total = Math.round(total * 100) / 100;
     
-    gateway.transaction.sale(
+    await gateway.transaction.sale(
       {
         amount: total,
         paymentMethodNonce: nonce,
