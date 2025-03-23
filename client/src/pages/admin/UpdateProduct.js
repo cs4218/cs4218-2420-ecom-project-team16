@@ -33,7 +33,7 @@ const UpdateProduct = () => {
       setPrice(data.product.price);
       setQuantity(data.product.quantity);
       setShipping(data.product.shipping);
-      setCategory(data.product.category.name);
+      setCategory(data.product.category._id);
     } catch (error) {
       console.log(error);
     }

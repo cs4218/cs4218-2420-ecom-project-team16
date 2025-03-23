@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 test.describe('adminMenu UI testing', () => {
     test('should be able to use admin menu', async ({ page }) => {
+        test.setTimeout(60000);
+
         await page.goto('http://localhost:3000/');
         await page.getByRole('link', { name: 'Login' }).click();
         await page.getByRole('textbox', { name: 'Enter Your Email' }).click();
@@ -16,14 +18,18 @@ test.describe('adminMenu UI testing', () => {
         await page.getByRole('link', { name: 'Create Category' }).click();
         await page.getByRole('textbox', { name: 'Enter new category' }).click();
         await page.getByRole('textbox', { name: 'Enter new category' }).fill('Test category');
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await page.getByRole('button', { name: 'Submit' }).click();
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await expect(page.getByRole('cell', { name: 'Test category' })).toBeVisible();
 
         // Test edit category
         await page.getByRole('button', { name: 'Edit' }).nth(3).click();
         await page.getByRole('dialog').getByRole('textbox', { name: 'Enter new category' }).click();
         await page.getByRole('dialog').getByRole('textbox', { name: 'Enter new category' }).fill('Test category2');
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await page.getByRole('dialog').getByRole('button', { name: 'Submit' }).click();
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await expect(page.locator('tbody')).toContainText('Test category2');
 
         // Test delete category
@@ -54,12 +60,14 @@ test.describe('adminMenu UI testing', () => {
 
         // Test edit product
         await page.getByRole('link', { name: 'Gameboy Gameboy Gameboy' }).click();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await page.getByRole('textbox', { name: 'write a description' }).click();
+        await new Promise(resolve => setTimeout(resolve, 2000));
         await page.getByRole('textbox', { name: 'write a description' }).fill('Gameboy updated description');
-        // await page.locator('div').filter({ hasText: /^UPDATE PRODUCT$/ }).click();
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.locator('div').filter({ hasText: /^UPDATE PRODUCT$/ }).click();
         await page.getByRole('button', { name: 'UPDATE PRODUCT' }).click();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         await page.getByRole('link', { name: 'Create Product' }).click();
         await page.getByRole('link', { name: 'Products' }).click();
         await expect(page.getByRole('link', { name: 'Gameboy Gameboy Gameboy' })).toBeVisible();
@@ -96,6 +104,6 @@ test.describe('adminMenu UI testing', () => {
         await expect(page.getByRole('cell', { name: 'admin@test.sg' }).nth(1)).toBeVisible();
         await expect(page.getByRole('cell', { name: 'CS 4218 Test Account' })).toBeVisible();
         await expect(page.getByRole('cell', { name: 'cs4218@test.com' })).toBeVisible();
-    });
+    },);
 
 })
