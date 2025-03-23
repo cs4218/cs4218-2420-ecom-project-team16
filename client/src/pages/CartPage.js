@@ -71,10 +71,15 @@ const CartPage = () => {
     try {
       setLoading(true);
       const { nonce } = await instance.requestPaymentMethod();
-      const { data } = await axios.post("/api/v1/product/braintree/payment", {
-        nonce,
-        cart,
-      });
+      const { data } = await axios.post("/api/v1/product/braintree/payment/",
+        { nonce, cart },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: auth?.token,
+          },
+        }
+      );
       setLoading(false);
       localStorage.removeItem("cart");
       setCart([]);
@@ -105,8 +110,8 @@ const CartPage = () => {
             </h1>
           </div>
         </div>
-        <div className="container ">
-          <div className="row ">
+        <div className="container">
+          <div className="row">
             <div className="col-md-7 p-0 m-0">
               {cart?.map((p) => (
                 <div className="row card flex-row" key={p._id}>
@@ -122,7 +127,7 @@ const CartPage = () => {
                   <div className="col-md-4">
                     <p>{p.name}</p>
                     <p>{p.description.substring(0, 30)}</p>
-                    <p>Price : {p.price}</p>
+                    <p>Price: ${parseFloat(p.price).toFixed(2)}</p>
                   </div>
                   <div className="col-md-4 cart-remove-btn">
                     <button
@@ -139,7 +144,7 @@ const CartPage = () => {
               <h2>Cart Summary</h2>
               <p>Total | Checkout | Payment</p>
               <hr />
-              <h4>Total : {totalPrice()} </h4>
+              <h4>Total: {totalPrice()} </h4>
               {auth?.user?.address ? (
                 <>
                   <div className="mb-3">
@@ -184,9 +189,6 @@ const CartPage = () => {
                     <DropIn
                       options={{
                         authorization: clientToken,
-                        paypal: {
-                          flow: "vault",
-                        },
                       }}
                       onInstance={setInstance}
                     />

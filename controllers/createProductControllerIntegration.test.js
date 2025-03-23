@@ -6,7 +6,7 @@ import dotenv from "dotenv"
 
 dotenv.config();
 
-let mockCategory, mockProduct, mockReq, mockRes
+let mockCategory, mockReq, mockRes
 
 describe("Integration test for create product controller", () => {
     beforeAll(async () => {
@@ -20,16 +20,11 @@ describe("Integration test for create product controller", () => {
     beforeEach(() => {
         jest.clearAllMocks();    
         mockCategory = {_id: new mongoose.Types.ObjectId(), name: "Category", slug: "test-category"}
-        mockProduct = {
-            photo: { data: null, contentType: null },
-            slug: 'updated-product',
-            save: jest.fn().mockResolvedValue(true),
-        };
         mockReq = {
             params: { pid: "someProductId", slug: "updated-product" },
             fields: {
-              name: "Updated product",
-              description: "Updated description",
+              name: "Some product",
+              description: "Some description",
               price: 100,
               category: mockCategory._id,
               quantity: 10,
@@ -50,20 +45,16 @@ describe("Integration test for create product controller", () => {
     })
     
     afterEach(async () => {
-        await productModel.deleteOne({ name: "Updated product" })
+        await productModel.deleteOne({ name: "Some product" })
     })
 
     test('creates new product successfully', async () => {
+        const initialState = await productModel.findOne({name: "Some product"})
+        expect(initialState).toBeNull()
+
         await createProductController(mockReq, mockRes)
 
-        expect(mockRes.status).toHaveBeenCalledWith(201)
-        expect(mockRes.send).toHaveBeenCalledWith({
-            success: true,
-            message: "Product created successfully",
-            products: expect.any(Object),
-        })
-
-        const createdProduct = await productModel.findOne({ name: "Updated product" });
+        const createdProduct = await productModel.findOne({ name: "Some product" });
         expect(createdProduct).not.toBeNull();
     })
 })

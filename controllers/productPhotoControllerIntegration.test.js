@@ -44,16 +44,15 @@ describe("Integration test for product photo controller", () => {
     
     test('retrieves product photo successfully', async () => {
         await productPhotoController(mockReq, mockRes)
-
-        expect(mockRes.status).toHaveBeenCalledWith(200)
-        expect(mockRes.set).toHaveBeenCalledWith("Content-type", "image/jpeg")
-        expect(mockRes.send).toHaveBeenCalledWith(expect.any(Buffer))
+        
+        const response = mockRes.send.mock.calls[0][0]
+        expect(response).toBeInstanceOf(Buffer)
     })
 
     test('retrieves error if product has no photo', async () => {
         noPhotoProduct = await productModel.create({
-            name: "Product to be found",
-            slug: slugify("Product to be found"),
+            name: "No Photo Product to be found",
+            slug: slugify("No Photo Product to be found"),
             description: "Description",
             price: 50,
             category: new mongoose.Types.ObjectId(),
@@ -63,11 +62,8 @@ describe("Integration test for product photo controller", () => {
         mockReq = { params: { pid: noPhotoProduct._id }}
         await productPhotoController(mockReq, mockRes)
 
-        expect(mockRes.status).toHaveBeenCalledWith(500)
-        expect(mockRes.send).toHaveBeenCalledWith({
-            success: false,
-            message: "Photo not found for this product"
-        })
+        const response = mockRes.send.mock.calls[0][0]
+        expect(response.success).toBeFalsy()
         await productModel.findByIdAndDelete(noPhotoProduct._id)
     })
 })

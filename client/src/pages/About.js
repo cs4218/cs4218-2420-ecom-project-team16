@@ -14,7 +14,7 @@ const About = () => {
         </div>
         <div className="col-md-4">
           <p className="text-justify mt-2">
-            Add text
+            We are a bunch of excited individuals who are passionate about web development.
           </p>
         </div>
       </div>

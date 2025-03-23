@@ -15,5 +15,5 @@ test('authentication admin and save state', async ({ page }) => {
     await page.waitForURL('/')
 
     // Save authentication state for reuse
-    await page.context().storageState({ path: 'e2e/context/adminAuth.json' });
+    await page.context().storageState({ path: 'playwright-tests/context/adminAuth.json' });
 })

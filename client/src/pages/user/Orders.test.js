@@ -44,6 +44,7 @@ describe("Orders Component", () => {
 	it("Should show Orders when there are orders", async () => {
 		useAuth.mockReturnValue([{ token: "authToken" }, jest.fn()]);
 		axios.get.mockResolvedValue({ data: [{
+			_id: "123",
 			status: "Delivered",
 			buyer: { name: "Neale" },
 			createAt: "2022-02-14",
@@ -71,6 +72,7 @@ describe("Orders Component", () => {
 	it("Should show Orders when there are multiple orders", async () => {
 		useAuth.mockReturnValue([{ token: "authToken" }, jest.fn()]);
 		axios.get.mockResolvedValue({ data: [{
+			_id: "123",
 			status: "Delivered",
 			buyer: { name: "Neale" },
 			createAt: "2022-02-14",
@@ -82,6 +84,7 @@ describe("Orders Component", () => {
 				price: 4.2
 			}]
 		}, {
+			_id: "124",
 			status: "Processing",
 			buyer: { name: "Tham" },
 			createAt: "2023-02-14",
@@ -111,6 +114,7 @@ describe("Orders Component", () => {
 	it("Should show Orders when there are multiple products", async () => {
 		useAuth.mockReturnValue([{ token: "authToken" }, jest.fn()]);
 		axios.get.mockResolvedValue({ data: [{
+			_id: "123",
 			status: "Delivered",
 			buyer: { name: "Neale" },
 			createAt: "2022-02-14",
@@ -144,6 +148,7 @@ describe("Orders Component", () => {
 	it("Should show Orders when there are no products", async () => {
 		useAuth.mockReturnValue([{ token: "authToken" }, jest.fn()]);
 		axios.get.mockResolvedValue({ data: [{
+			_id: "123",
 			status: "Delivered",
 			buyer: { name: "Neale" },
 			createAt: "2022-02-14",
@@ -165,6 +170,7 @@ describe("Orders Component", () => {
 	it("Should show Orders when products field is missing", async () => {
 		useAuth.mockReturnValue([{ token: "authToken" }, jest.fn()]);
 		axios.get.mockResolvedValue({ data: [{
+			_id: "123",
 			status: "Delivered",
 			buyer: { name: "Neale" },
 			createAt: "2022-02-14",

@@ -99,7 +99,7 @@ describe("CartPage Cart", () => {
   it("Should show total price as $0.00 when no items in cart", async () => {
     // Test
     await act(async () => render(<CartPage />));
-    expect(screen.getByText("Total : $0.00")).toBeInTheDocument();
+    expect(screen.getByText("Total: $0.00")).toBeInTheDocument();
   });
 
   it("Should show total price as single item price", async () => {
@@ -110,7 +110,7 @@ describe("CartPage Cart", () => {
 
     // Test
     await act(async () => render(<CartPage />));
-    expect(screen.getByText("Total : $2.50")).toBeInTheDocument();
+    expect(screen.getByText("Total: $2.50")).toBeInTheDocument();
   });
 
   it("Should show total price as sum", async () => {
@@ -122,7 +122,7 @@ describe("CartPage Cart", () => {
 
     // Test
     await act(async () => render(<CartPage />));
-    expect(screen.getByText("Total : $3.50")).toBeInTheDocument();
+    expect(screen.getByText("Total: $3.50")).toBeInTheDocument();
   });
 
   it("Should throw error when single price is invalid", async () => {

@@ -19,10 +19,4 @@ describe("About Page", () => {
     expect(image).toBeInTheDocument();
     expect(image.getAttribute("src")).toMatch(/about.jpeg/gi);
   });
-
-  it("Should render the Add text paragraph", () => {
-    render(<About />);
-    const paragraph = screen.getByText("Add text");
-    expect(paragraph).toBeInTheDocument();
-  });
 });
