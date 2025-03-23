@@ -12,8 +12,9 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: 'e2e',
-  testIgnore: ['e2e/context/**'],
+  // testDir: 'e2e',
+  // testIgnore: ['e2e/context/**'],
+  testDir: "./playwright-tests/",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -32,7 +33,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
-    storageState: 'e2e/context/adminAuth.json',
+    storageState: 'playwright-tests/context/adminAuth.json',
     headless: true,
   },
 
