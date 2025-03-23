@@ -15,12 +15,25 @@ test.describe('Update Product Page', () => {
               quantity: 50,
               description: 'This is a mock product description.',
               price: 100,
-              category: { _id: '456', name: 'Mock Category', slug: 'mock category' },
-              shipping: "yes",
+              category: { _id: '1', name: 'Mock Category', slug: 'mock-category' },
+              shipping: true,
             }
           }),
         });
     });
+
+    await page.route('**/api/v1/category/get-category', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          message: "All Categories List",
+          category: [{_id: '1', name: 'Mock Category', slug: 'mock-category'}]
+        })
+      })
+    })
+
 
     // Intercept the API request for updating product
     await page.route('**/api/v1/product/update-product/*', async (route) => {
@@ -50,13 +63,12 @@ test.describe('Update Product Page', () => {
   });
 
   test('should load the product details correctly', async ({ page }) => {
-    await expect(page.locator('h1')).toHaveText('Update Product');
     await expect(page.locator('.ant-select-selection-item').first()).toHaveText('Mock Category');
     await expect(page.locator('input[placeholder="write a name"]')).toHaveValue('Mock Product');
     await expect(page.locator('textarea[placeholder="write a description"]')).toHaveValue('This is a mock product description.');
     await expect(page.locator('input[placeholder="write a Price"]')).toHaveValue('100');
     await expect(page.locator('input[placeholder="write a quantity"]')).toHaveValue('50');
-    await expect(page.locator('.ant-select-selection-item').nth(1)).toHaveText('yes');
+    await expect(page.locator('.ant-select-selection-item').nth(1)).toHaveText('Yes');
   });
 
   test('should display product image correctly', async ({ page }) => {

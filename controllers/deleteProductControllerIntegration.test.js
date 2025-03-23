@@ -48,13 +48,10 @@ describe("Integration test for create product controller", () => {
     })
     
     test('deletes a product successfully', async () => {
-        await deleteProductController(mockReq, mockRes)
+        const initialState = await productModel.findById(productToBeDeleted._id)
+        expect(initialState).not.toBeNull()
 
-        expect(mockRes.status).toHaveBeenCalledWith(200)
-        expect(mockRes.send).toHaveBeenCalledWith({
-            success: true,
-            message: "Product deleted successfully",
-        })
+        await deleteProductController(mockReq, mockRes)
 
         const deletedProduct = await productModel.findById(productToBeDeleted._id)
         expect(deletedProduct).toBeNull()

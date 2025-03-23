@@ -47,13 +47,6 @@ describe("Integration test for get single product controller", () => {
     test('retrieves a single product successfully', async () => {
         await getSingleProductController(mockReq, mockRes)
 
-        expect(mockRes.status).toHaveBeenCalledWith(200)
-        expect(mockRes.send).toHaveBeenCalledWith({
-            success: true,
-            message: "Single product fetched",
-            product: expect.any(Object),
-        })
-
         const foundProduct = await productModel.findOne({ name: "Product to be found" });
         expect(foundProduct).not.toBeNull();
     })

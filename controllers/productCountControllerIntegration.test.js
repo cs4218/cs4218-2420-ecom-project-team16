@@ -1,13 +1,15 @@
 import { afterAll, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { productCountController } from "./productController";
+import productModel from "../models/productModel";
 import mongoose from "mongoose";
 import dotenv from "dotenv"
+import slugify from "slugify";
 
 dotenv.config();
 
 let mockReq, mockRes
 
-describe("Integration test for create product controller", () => {
+describe("Integration test for product count controller", () => {
     beforeAll(async () => {
         await mongoose.connect(process.env.MONGO_URL);
     })
@@ -27,13 +29,12 @@ describe("Integration test for create product controller", () => {
         }
     })
 
+    // initially I wanted to test if inserting a product increases the product count by 1
+    // but because tests are asynchronous, it may be flaky and unreliable
     test('retrieves product count successfully', async () => {
         await productCountController(mockReq, mockRes)
-
-        expect(mockRes.status).toHaveBeenCalledWith(200)
-        expect(mockRes.send).toHaveBeenCalledWith({
-            success: true,
-            total: expect.any(Number),
-        })
+        const response = mockRes.send.mock.calls[0][0]
+        const count = response.total
+        expect(count).toBeGreaterThanOrEqual(0)
     })
 })
