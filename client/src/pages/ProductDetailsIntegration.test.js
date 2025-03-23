@@ -137,10 +137,10 @@ describe("Product Details Integration Test", () => {
         expect(screen.getByText(/Similar Products/)).toBeInTheDocument()
     });
 
-    const addToCartButton = screen.getAllByTestId("related-cart-button")[1];
+    const addToCartButton = screen.getByTestId("related-cart-button");
     fireEvent.click(addToCartButton);
 
     const cart = JSON.parse(localStorage.getItem("cart"));
-    expect(cart[0]._id).toEqual(relatedProduct._id.toString())
+    expect(cart[0]._id).toEqual(relatedProduct._id.toString());
   });
 })
