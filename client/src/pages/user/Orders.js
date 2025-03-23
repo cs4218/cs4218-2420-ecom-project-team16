@@ -31,9 +31,8 @@ const Orders = () => {
           <div className="col-md-9">
             <h1 className="text-center">All Orders</h1>
             {orders?.map((o, i) => {
-              console.log (o);
               return (
-                <div className="border shadow" key={i}>
+                <div className="border shadow" key={o._id}>
                   <table className="table">
                     <thead>
                       <tr>
