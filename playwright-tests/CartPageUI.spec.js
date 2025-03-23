@@ -49,7 +49,7 @@ test.describe("Cart Page Auth Full Cart", () => {
 
     test.afterAll(async () => {
         await mongoose.connect(process.env.MONGO_URL);
-        await orderModel.deleteMany({ buyer: "67de58fec27b07a0cd75ed22" });
+        await orderModel.deleteMany({ buyer: "671bc2f1364eadc7d5417c80" });
         await mongoose.connection.close();
     })
 
