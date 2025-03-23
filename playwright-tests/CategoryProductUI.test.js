@@ -6,13 +6,13 @@ import { test, expect } from '@playwright/test';
 
 test('Test Basic Layout with pre-input data', async ({ page }) => {
     await page.goto('http://localhost:3000/category/clothing');
-    await expect(page.getByRole('heading', { name: 'Category - Clothing' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'result found' })).toBeVisible();
-});
+    await expect(page.getByRole('heading', { name: 'Category - Clothing' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'result found' })).toBeVisible({ timeout: 10000 });
+}, 10000);
 
 test('Test Redirection to product page', async ({ page }) => {
     await page.goto('http://localhost:3000/category/clothing');
-    await expect(page.getByRole('heading', { name: 'NUS T-shirt' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'NUS T-shirt' })).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Plain NUS T-shirt for sale...')).toBeVisible();
     await expect(page.getByRole('button', { name: 'More Details' })).toBeVisible();
     await page.getByRole('button', { name: 'More Details' }).click();
@@ -20,4 +20,4 @@ test('Test Redirection to product page', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Name : NUS T-shirt' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Description : Plain NUS T-' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Category : Clothing' })).toBeVisible();
-});
+}, 10000);

@@ -14,6 +14,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   // testDir: 'e2e',
   // testIgnore: ['e2e/context/**'],
+  timeout: 20000,
   testDir: "./playwright-tests/",
   /* Run tests in files in parallel */
   fullyParallel: true,
