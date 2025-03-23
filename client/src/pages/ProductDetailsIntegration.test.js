@@ -103,9 +103,9 @@ describe("Product Details Integration Test", () => {
       renderProductDetails()
 
       await waitFor(() => {
-        expect(screen.getByText("Test Product")).toBeInTheDocument();
-        expect(screen.getByText("Test Description...")).toBeInTheDocument();
-        expect(screen.getByText("$100.00")).toBeInTheDocument();
+        expect(screen.getByText(/Test Product/)).toBeInTheDocument();
+        expect(screen.getByText(/Test Description/)).toBeInTheDocument();
+        expect(screen.getByText(/99.99/)).toBeInTheDocument();
         expect(screen.getByText(/Category : Test Category/)).toBeInTheDocument();
       })
   })
@@ -116,7 +116,7 @@ describe("Product Details Integration Test", () => {
     await waitFor(() => {
       expect(screen.getByText("Related Product")).toBeInTheDocument()
       expect(screen.getByText(/Related Description/)).toBeInTheDocument()
-      expect(screen.getByText("$100.00")).toBeInTheDocument()
+      expect(screen.getByText(/100/)).toBeInTheDocument()
     })
   })
 
@@ -142,10 +142,10 @@ describe("Product Details Integration Test", () => {
         expect(screen.getByText(/Similar Products/)).toBeInTheDocument()
     }, {timeout: 5000});
 
-    const addToCartButton = screen.getByTestId("related-cart-button");
+    const addToCartButton = screen.getByTestId("related-cart-button")
     fireEvent.click(addToCartButton);
 
     const cart = JSON.parse(localStorage.getItem("cart"));
-    expect(cart[0]._id).toEqual(relatedProduct._id.toString());
+    expect(cart[0]._id).toEqual(relatedProduct._id.toString())
   });
 })

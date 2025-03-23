@@ -84,6 +84,12 @@ describe("UpdateProduct Integration Test", () => {
   })
 
   afterAll(async () => {
+    if (mockProduct) {
+      await productModel.deleteOne({ _id: mockProduct._id });
+    }
+    if (mockCategory) {
+      await categoryModel.deleteOne({ _id: mockCategory._id });
+    }
     await mongoose.connection.close();
   })
 
