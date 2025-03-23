@@ -17,8 +17,8 @@ describe("Integration test for product photo controller", () => {
         jest.clearAllMocks();
 
         productToBeFound = await productModel.create({
-            name: "Product to be found",
-            slug: slugify("Product to be found"),
+            name: "Photo Product to be found",
+            slug: slugify("Photo Product to be found"),
             photo: {
                 data: fs.readFileSync('./client/public/images/test-image.jpg'),
                 contentType: 'image/jpeg',
@@ -29,27 +29,6 @@ describe("Integration test for product photo controller", () => {
             quantity: 5,
         });
 
-        mockReq = { params: { pid: productToBeFound._id }}
-        mockRes = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-            set: jest.fn()
-        }
-    })
-
-    afterAll(async () => {
-        await productModel.findByIdAndDelete(productToBeFound._id);
-        await mongoose.connection.close();
-    })
-    
-    test('retrieves product photo successfully', async () => {
-        await productPhotoController(mockReq, mockRes)
-        
-        const response = mockRes.send.mock.calls[0][0]
-        expect(response).toBeInstanceOf(Buffer)
-    })
-
-    test('retrieves error if product has no photo', async () => {
         noPhotoProduct = await productModel.create({
             name: "No Photo Product to be found",
             slug: slugify("No Photo Product to be found"),
@@ -59,11 +38,33 @@ describe("Integration test for product photo controller", () => {
             quantity: 5,   
         })
 
+        mockReq = {}
+        mockRes = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            set: jest.fn()
+        }
+    })
+
+    afterAll(async () => {
+        await productModel.findByIdAndDelete(productToBeFound._id);
+        await productModel.findByIdAndDelete(noPhotoProduct._id)
+        await mongoose.connection.close();
+    })
+    
+    test('retrieves product photo successfully', async () => {
+        mockReq = { params: { pid: productToBeFound._id }}
+        await productPhotoController(mockReq, mockRes)
+        
+        const response = mockRes.send.mock.calls[0][0]
+        expect(response).toBeInstanceOf(Buffer)
+    })
+
+    test('retrieves error if product has no photo', async () => {
         mockReq = { params: { pid: noPhotoProduct._id }}
         await productPhotoController(mockReq, mockRes)
 
         const response = mockRes.send.mock.calls[0][0]
         expect(response.success).toBeFalsy()
-        await productModel.findByIdAndDelete(noPhotoProduct._id)
     })
 })
