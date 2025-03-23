@@ -27,7 +27,7 @@ const CreateProduct = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wwent wrong in getting catgeory");
+      toast.error("Something went wrong in getting catgeory");
     }
   };
 
@@ -73,7 +73,7 @@ const CreateProduct = () => {
             <h1>Create Product</h1>
             <div className="m-1 w-75">
               <Select
-                variant={false}
+                variant="filled"
                 placeholder="Select a category"
                 size="large"
                 showSearch
@@ -151,7 +151,7 @@ const CreateProduct = () => {
               </div>
               <div className="mb-3">
                 <Select
-                  variant={false}
+                  variant="filled"
                   placeholder="Select Shipping "
                   size="large"
                   showSearch

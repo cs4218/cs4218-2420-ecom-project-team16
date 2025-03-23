@@ -9,16 +9,13 @@ let mongoServer;
 
 describe("User Model ", () => {
     beforeAll(async () => {
-        // await mongoose.connect(process.env.MONGO_URL, {
-        //     useNewUrlParser: true,
-        //     useUnifiedTopology: true,
-        // });
         mongoServer = await MongoMemoryServer.create();
         const mongoUri = mongoServer.getUri();
         await mongoose.connect(mongoUri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
+        await userModel.createIndexes();
     });
 
     afterEach(async () => {
