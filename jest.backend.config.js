@@ -14,6 +14,8 @@ export default {
     "<rootDir>/config/*Integration*.test.js",
   ],
 
+  testSequencer: "<rootDir>/customSequencer.js",
+
   // jest code coverage
   collectCoverage: true,
   collectCoverageFrom: ["controllers/**", "models/**"],

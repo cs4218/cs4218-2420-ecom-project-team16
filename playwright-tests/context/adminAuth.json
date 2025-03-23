@@ -1,0 +1,14 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:3000",
+      "localStorage": [
+        {
+          "name": "auth",
+          "value": "{\"success\":true,\"message\":\"login successfully\",\"user\":{\"_id\":\"671bc2f1364eadc7d5417c80\",\"name\":\"admin@test.sg\",\"email\":\"admin@test.sg\",\"phone\":\"admin@test.sg\",\"address\":\"admin@test.sg\",\"role\":1},\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzFiYzJmMTM2NGVhZGM3ZDU0MTdjODAiLCJpYXQiOjE3NDIyMDg2MTEsImV4cCI6MTc0MjgxMzQxMX0.OwucZJqll29LDhCP98L7CEe7YcEudic1DZadGP0R0qI\"}"
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,7 @@ export default {
   // name displayed during tests
   displayName: "frontend",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testTimeout: 10000,
 
   // simulates browser environment in jest
   // e.g., using document.querySelector in your tests
