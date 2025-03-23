@@ -352,6 +352,11 @@ export const braintreeTokenController = async (req, res) => {
       }
     });
   } catch (error) {
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while getting token",
+    });
     console.log(error);
   }
 };
@@ -360,33 +365,51 @@ export const braintreeTokenController = async (req, res) => {
 export const brainTreePaymentController = async (req, res) => {
   try {
     const { nonce, cart } = req.body;
-    let total = 0;
-    cart.map((i) => {
-      total += i.price;
-    });
-    let newTransaction = gateway.transaction.sale(
+
+    if (!cart || !Array.isArray(cart)) {
+      return res.status(400).send({ error: "Cart is required" });
+    }
+
+    let total = cart.reduce((acc, item) => {
+      if (!item.price || isNaN(item.price)) {
+        return acc;
+      }
+      return acc + item.price;
+    }, 0);
+    total = Math.round(total * 100) / 100;
+    
+    await gateway.transaction.sale(
       {
         amount: total,
         paymentMethodNonce: nonce,
         options: {
           submitForSettlement: true,
         },
+        orderId: Date.now().toString(),
       },
-      function (error, result) {
-        if (result) {
-          const order = new orderModel({
-            products: cart,
-            payment: result,
-            buyer: req.user._id,
-          }).save();
-          res.json({ ok: true });
-        } else {
-          console.log(error);
-          res.status(500).send(error);
+      async (error, result) => {
+        if (error || !result || !result.success) {
+          console.log(error, result);
+          return res.status(500).send({ error, result });
         }
+
+        const productIds = cart.map((item) => item._id);
+
+        await orderModel.create({
+          products: productIds,
+          payment: result,
+          buyer: req.user._id,
+        });
+
+        res.json({ ok: true });
       }
     );
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while payment"
+    });
   }
 };

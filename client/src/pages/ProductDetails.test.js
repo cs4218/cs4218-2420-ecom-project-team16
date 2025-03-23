@@ -6,6 +6,7 @@ import { MemoryRouter, useNavigate, useParams } from "react-router-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ProductDetails from "./ProductDetails";
+import { CartProvider } from "../context/cart";
 
 jest.mock("axios")
 jest.mock("../components/Layout", () => jest.fn(({children}) => <div>{children}</div>))
@@ -51,9 +52,11 @@ describe("ProductDetails", () => {
         axios.get.mockResolvedValueOnce({ data: { products: [] }});
         
         render(
-            <MemoryRouter>
-                <ProductDetails/>
-            </MemoryRouter>
+            <CartProvider>
+                <MemoryRouter>
+                    <ProductDetails/>
+                </MemoryRouter>
+            </CartProvider>
         )
 
         expect(screen.getByText("Product Details")).toBeInTheDocument();
@@ -73,9 +76,11 @@ describe("ProductDetails", () => {
         axios.get.mockResolvedValueOnce({ data: mockRelatedProducts });
         
         render(
-            <MemoryRouter>
-                <ProductDetails/>
-            </MemoryRouter>
+            <CartProvider>
+                <MemoryRouter>
+                    <ProductDetails/>
+                </MemoryRouter>
+            </CartProvider>
         )
 
         expect(screen.getByText("Product Details")).toBeInTheDocument();
@@ -96,9 +101,11 @@ describe("ProductDetails", () => {
         jest.spyOn(console, 'log').mockImplementation(() => {})
 
         render(
-            <MemoryRouter>
-                <ProductDetails/>
-            </MemoryRouter>
+            <CartProvider>
+                <MemoryRouter>
+                    <ProductDetails/>
+                </MemoryRouter>
+            </CartProvider>
         );
 
         await waitFor(() => {
@@ -113,9 +120,11 @@ describe("ProductDetails", () => {
         jest.spyOn(console, 'log').mockImplementation(() => {})
 
         render(
-            <MemoryRouter>
-                <ProductDetails/>
-            </MemoryRouter>
+            <CartProvider>
+                <MemoryRouter>
+                    <ProductDetails/>
+                </MemoryRouter>
+            </CartProvider>
         );
 
         await waitFor(() => {
@@ -128,9 +137,11 @@ describe("ProductDetails", () => {
         axios.get.mockResolvedValueOnce({ data: mockRelatedProducts });
 
         render(
-            <MemoryRouter>
-                <ProductDetails/>
-            </MemoryRouter>
+            <CartProvider>
+                <MemoryRouter>
+                    <ProductDetails/>
+                </MemoryRouter>
+            </CartProvider>
         );
 
         await waitFor(() => screen.getByText("Related Product"));
