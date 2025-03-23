@@ -10,9 +10,9 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "sonarqube": "sonar-scanner",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:frontend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js",
-    "test:fast-frontend": "start-server-and-test 'npm run server' http://localhost:6060 'node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js'",
-    "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js"
+    "test:old-frontend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js",
+    "test:frontend": "start-server-and-test 'npm run server' http://localhost:6060 'node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js'",
+    "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js "
   },
   "keywords": [],
   "author": "RP",
@@ -43,6 +43,7 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.24.1",
     "@playwright/test": "^1.44.0",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20.12.12",
     "babel-jest": "^29.7.0",
     "identity-obj-proxy": "^3.0.0",
