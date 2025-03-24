@@ -39,7 +39,7 @@ describe("Products Integration Test", () => {
   const mockCategoryParams = {
     _id: new mongoose.Types.ObjectId(),
     name: "Test Category",
-    slug: "test-category"
+    slug: "mock-test-category"
   }
 
   const mockProductParams = {
@@ -71,6 +71,8 @@ describe("Products Integration Test", () => {
   });
 
   afterAll(async () => {
+      await productModel.deleteOne({name: mockProductParams.name});
+      await categoryModel.deleteOne({name: mockCategoryParams.name});
       await mongoose.connection.close();
   })
 

@@ -19,10 +19,27 @@ test.describe("test non authorised users acess to createCategory Page", () => {
 
 test.describe("login with admin user and access page", () => {
   //Log in for each test
-  test.beforeEach(async ({ page }) => {
-    await page.goto("http://localhost:3000/");
+  test.setTimeout(60000);
+  // test.beforeEach(async ({ page }) => {
+  //   await page.goto("http://localhost:3000/login");
 
-    await page.getByRole("link", { name: "Login" }).click();
+  //   await page
+  //     .getByRole("textbox", { name: "Enter Your Email" })
+  //     .fill("admin@test.sg");
+  //   await page.getByRole("textbox", { name: "Enter Your Password" }).click();
+  //   await page
+  //     .getByRole("textbox", { name: "Enter Your Password" })
+  //     .fill("admin@test.sg");
+  //   await page.getByRole("button", { name: "LOGIN" }).click();
+  //   const loggedIn = page.waitForURL("http://localhost:3000");
+  //   await new Promise((resolve) => setTimeout(resolve, 5000));
+  //   await loggedIn;
+  // });
+
+  test("To create a new category", async ({ page }) => {
+    await mongoose.connect(process.env.MONGO_URL);
+    await page.goto("http://localhost:3000/login");
+
     await page
       .getByRole("textbox", { name: "Enter Your Email" })
       .fill("admin@test.sg");
@@ -31,14 +48,8 @@ test.describe("login with admin user and access page", () => {
       .getByRole("textbox", { name: "Enter Your Password" })
       .fill("admin@test.sg");
     await page.getByRole("button", { name: "LOGIN" }).click();
-    const loggedIn = page.waitForURL("http://localhost:3000");
-    await loggedIn;
-  });
+    await page.waitForURL("http://localhost:3000");
 
-  test("To create a new category", async ({ page }) => {
-    await mongoose.connect(process.env.MONGO_URL);
-    const loggedIn = page.waitForURL("http://localhost:3000");
-    await loggedIn;
     await page.goto("http://localhost:3000/dashboard/admin/create-category");
     await page.getByRole("textbox", { name: "Enter new category" }).click();
     await page
@@ -57,8 +68,17 @@ test.describe("login with admin user and access page", () => {
       name: "Category to update",
       slug: "category to update",
     });
-    const loggedIn = page.waitForURL("http://localhost:3000");
-    await loggedIn;
+    await page.goto("http://localhost:3000/login");
+
+    await page
+      .getByRole("textbox", { name: "Enter Your Email" })
+      .fill("admin@test.sg");
+    await page.getByRole("textbox", { name: "Enter Your Password" }).click();
+    await page
+      .getByRole("textbox", { name: "Enter Your Password" })
+      .fill("admin@test.sg");
+    await page.getByRole("button", { name: "LOGIN" }).click();
+    await page.waitForURL("http://localhost:3000");
     await page.goto("http://localhost:3000/dashboard/admin/create-category");
     await expect(
       page.getByRole("cell", { name: "Category to update" })
@@ -93,8 +113,18 @@ test.describe("login with admin user and access page", () => {
       name: "Category to delete",
       slug: "category to delete",
     });
-    const loggedIn = page.waitForURL("http://localhost:3000");
-    await loggedIn;
+    await page.goto("http://localhost:3000/login");
+
+    await page
+      .getByRole("textbox", { name: "Enter Your Email" })
+      .fill("admin@test.sg");
+    await page.getByRole("textbox", { name: "Enter Your Password" }).click();
+    await page
+      .getByRole("textbox", { name: "Enter Your Password" })
+      .fill("admin@test.sg");
+    await page.getByRole("button", { name: "LOGIN" }).click();
+    await page.waitForURL("http://localhost:3000");
+
     await page.goto("http://localhost:3000/dashboard/admin/create-category");
     await expect(
       page.getByRole("cell", { name: "Category to delete" })
