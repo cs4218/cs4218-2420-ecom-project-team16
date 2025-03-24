@@ -24,7 +24,7 @@ Make sure you have the following installed:
    npm install
    ```
 
-4. Set up environment variables:
+3. Set up environment variables:
    Overwrite the .env file in the code with the one in Canvas .zip file
 
 ## Running the Application
@@ -36,14 +36,24 @@ npm run dev
 
 ## Running Tests
 
-Run frontend unit tests with:
+Run frontend unit and integration tests with:
 ```sh
 npm run test:frontend
 ```
 
-Run backend unit tests with:
+Run backend unit and integration tests with:
 ```sh
 npm run test:backend
+```
+
+Run UI tests with:
+```sh
+npx playwright test
+```
+As some of the tests are flaky, they can be tested in isolation for better performance and much higher chance to pass. 
+You can choose to run the test in isolation with:
+```sh
+npx playwright test
 ```
 
 ## Continuous Integration
